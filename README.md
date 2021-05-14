@@ -1,0 +1,3 @@
+# SpyCode CLI
+
+CLI Tool
