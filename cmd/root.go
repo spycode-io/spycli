@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"log"
+	"os"
+
 	"github.com/spf13/cobra"
 )
 
@@ -21,11 +24,11 @@ projects, blueprints, tf-components, etc`,
 
 var (
 	Verbose, CleanCache bool
-	BaseDirectory       string
 )
 
 func init() {
 	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "v", false, "verbose output")
+	log.SetOutput(os.Stdout)
 }
 
 // Execute executes the root command.
