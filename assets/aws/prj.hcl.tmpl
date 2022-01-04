@@ -1,0 +1,9 @@
+locals {
+  project_name = "{{.Name}}"
+  project_slug_name = "{{.SlugName}}"
+  stack_name = "ha-multi-region"
+  project    = "naz-connect"
+  blueprint  = "git@ssh.dev.azure.com:v3/ciandt-ab-inbev/US_B2B_DELTA/iac-bp-azure"
+  ignore     = ["redis"]
+  version    = "v1.0.1"
+}

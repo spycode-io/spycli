@@ -32,11 +32,12 @@ type ProjectInterface interface {
 }
 
 var (
+	DefaultRegions      []string                 = []string{"east-us1", "east-us2", "west-us1"}
 	DefaultEnvironments []string                 = []string{"stage", "qa", "prod"}
 	ProjectFileSet      map[string][]ProjectFile = map[string][]ProjectFile{
 		"aws": {
 			ProjectFile{TmplFile: "gitignore.tmpl", File: ".gitignore"},
-			ProjectFile{TmplFile: "terragrunt.hcl.tmpl", File: "terragrunt.hcl"},
+			ProjectFile{TmplFile: "terragrunt.hcl.tmpl", File: "aws/terragrunt.hcl"},
 		},
 	}
 )
@@ -75,11 +76,20 @@ func (p *Project) InitProject() (err error) {
 
 	//Create folder structure
 	for _, env := range p.Environments {
-		envPath := fmt.Sprintf("%s/%s", p.ProjectPath, env)
-		err = os.MkdirAll(envPath, os.ModePerm)
-		if nil != err {
-			return
+		envPath := fmt.Sprintf("%s/%s/%s", p.ProjectPath, p.Kind, env)
+		for _, reg := range DefaultRegions {
+			regPath := fmt.Sprintf("%s/%s", envPath, reg)
+			err = os.MkdirAll(regPath, os.ModePerm)
+			if nil != err {
+				return
+			}
+
+			err = p.WriteFile("prj.hcl.tmpl", fmt.Sprintf("%s/%s/%s", p.Kind, env, "prj.hcl"))
+			if nil != err {
+				return
+			}
 		}
+
 	}
 
 	//Create files from template by kind
