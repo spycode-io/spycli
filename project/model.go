@@ -18,12 +18,28 @@ type Project struct {
 	AssetsBasePath string
 	ProjectPath    string
 	AssetsData     embed.FS
+	Environments   []string
+}
+
+type ProjectFile struct {
+	TmplFile string
+	File     string
 }
 
 type ProjectInterface interface {
 	WriteFile(tmplPath string, filePath string) error
 	InitProject() error
 }
+
+var (
+	DefaultEnvironments []string                 = []string{"stage", "qa", "prod"}
+	ProjectFileSet      map[string][]ProjectFile = map[string][]ProjectFile{
+		"aws": {
+			ProjectFile{TmplFile: "gitignore.tmpl", File: ".gitignore"},
+			ProjectFile{TmplFile: "terragrunt.hcl.tmpl", File: "terragrunt.hcl"},
+		},
+	}
+)
 
 func New(assetsData embed.FS, baseDirectory string, kind string, name string) (*Project, error) {
 
@@ -35,6 +51,7 @@ func New(assetsData embed.FS, baseDirectory string, kind string, name string) (*
 		ProjectPath:    fmt.Sprintf("%s/%s", baseDirectory, slug.Make(name)),
 		AssetsData:     assetsData,
 		AssetsBasePath: fmt.Sprintf("assets/%s", kind),
+		Environments:   DefaultEnvironments,
 	}
 
 	return project, project.InitProject()
@@ -50,17 +67,29 @@ func (p *Project) InitProject() (err error) {
 		os.MkdirAll(p.BasePath, os.ModePerm)
 	}
 
+	//Create the project base foder
 	err = os.MkdirAll(p.ProjectPath, os.ModePerm)
 	if nil != err {
 		return
 	}
 
-	err = p.WriteFile("gitignore.tmpl", ".gitignore")
-	if nil != err {
-		return
+	//Create folder structure
+	for _, env := range p.Environments {
+		envPath := fmt.Sprintf("%s/%s", p.ProjectPath, env)
+		err = os.MkdirAll(envPath, os.ModePerm)
+		if nil != err {
+			return
+		}
 	}
 
-	err = p.WriteFile("terragrunt.hcl.tmpl", "terragrunt.hcl")
+	//Create files from template by kind
+	for _, pf := range ProjectFileSet[p.Kind] {
+		err = p.WriteFile(pf.TmplFile, pf.File)
+		if nil != err {
+			return
+		}
+	}
+
 	return
 }
 
