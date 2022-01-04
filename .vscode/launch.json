@@ -5,16 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Package",
+            "name": "New Project",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}/../main.go",
+            "preLaunchTask": {
+                "task": "",
+                "type": ""
+            },
             "args": [
                 "project", 
                 "new",
-                "-n", 
-                "SpyCLI Test"
+                "-n", "My Project",
+                "-d", "iac-test",
+                "-s", "my-stack",
+                "-b", "bp-azure",
+                "-v", "v0.0.0"
             ]
         }
     ]

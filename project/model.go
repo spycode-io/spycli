@@ -11,14 +11,28 @@ import (
 )
 
 type Project struct {
-	BasePath       string
-	Kind           string
-	Name           string
-	SlugName       string
-	AssetsBasePath string
-	ProjectPath    string
-	AssetsData     embed.FS
-	Environments   []string
+	Name             string
+	SlugName         string
+	BasePath         string
+	Platform         string
+	PlatformBasePath string
+	AssetsBasePath   string
+	ProjectPath      string
+	Stack            string
+	Blueprint        string
+	BlueprintVersion string
+	Environments     []Environment
+	Regions          []Region
+	AssetsData       embed.FS
+}
+
+type Environment struct {
+	EnvName     string
+	BaseEnvPath string
+}
+
+type Region struct {
+	Region string
 }
 
 type ProjectFile struct {
@@ -27,32 +41,68 @@ type ProjectFile struct {
 }
 
 type ProjectInterface interface {
-	WriteFile(tmplPath string, filePath string) error
+	WriteFile(tmplFile string, file string) (err error)
+	WriteObjToFile(tmplFile string, file string, obj interface{}) error
 	InitProject() error
 }
 
 var (
-	DefaultRegions      []string                 = []string{"east-us1", "east-us2", "west-us1"}
-	DefaultEnvironments []string                 = []string{"stage", "qa", "prod"}
-	ProjectFileSet      map[string][]ProjectFile = map[string][]ProjectFile{
+	DefaultRegions      []string                            = []string{"east-us1", "east-us2", "west-us1"}
+	DefaultEnvironments []string                            = []string{"stage", "qa", "prod"}
+	PlatformFileSet     map[string]map[string][]ProjectFile = map[string]map[string][]ProjectFile{
 		"aws": {
-			ProjectFile{TmplFile: "gitignore.tmpl", File: ".gitignore"},
-			ProjectFile{TmplFile: "terragrunt.hcl.tmpl", File: "aws/terragrunt.hcl"},
+			"platform": []ProjectFile{
+				{TmplFile: "gitignore.tmpl", File: ".gitignore"},
+			},
+			"project": []ProjectFile{
+				{TmplFile: "prj.hcl.tmpl", File: "prj.hcl"},
+			},
+			"environment": []ProjectFile{
+				{TmplFile: "env.hcl.tmpl", File: "env.hcl"},
+			},
+			"region": []ProjectFile{
+				{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
+				{TmplFile: "gitignore_region.tmpl", File: ".gitignore"},
+			},
 		},
 	}
 )
 
-func New(assetsData embed.FS, baseDirectory string, kind string, name string) (*Project, error) {
+func New(
+	assetsData embed.FS,
+	baseDirectory string,
+	kind string,
+	name string,
+	stack string,
+	blueprint string,
+	blueprintVersion string,
+	environments []string,
+	regions []string) (*Project, error) {
 
 	project := &Project{
-		BasePath:       baseDirectory,
-		Kind:           kind,
-		Name:           name,
-		SlugName:       slug.Make(name),
-		ProjectPath:    fmt.Sprintf("%s/%s", baseDirectory, slug.Make(name)),
-		AssetsData:     assetsData,
-		AssetsBasePath: fmt.Sprintf("assets/%s", kind),
-		Environments:   DefaultEnvironments,
+		Name:             name,
+		BasePath:         baseDirectory,
+		Platform:         kind,
+		PlatformBasePath: fmt.Sprintf("%s/%s", baseDirectory, kind),
+		SlugName:         slug.Make(name),
+		ProjectPath:      fmt.Sprintf("%s/%s/%s", baseDirectory, kind, slug.Make(name)),
+		AssetsData:       assetsData,
+		AssetsBasePath:   fmt.Sprintf("assets/%s", kind),
+		Stack:            stack,
+		Blueprint:        blueprint,
+		BlueprintVersion: blueprintVersion,
+	}
+
+	for _, env := range environments {
+		project.Environments = append(project.Environments,
+			Environment{EnvName: env, BaseEnvPath: fmt.Sprintf("%s/%s", project.ProjectPath, env)},
+		)
+	}
+
+	for _, reg := range regions {
+		project.Regions = append(project.Regions,
+			Region{Region: reg},
+		)
 	}
 
 	return project, project.InitProject()
@@ -60,7 +110,7 @@ func New(assetsData embed.FS, baseDirectory string, kind string, name string) (*
 
 func (p *Project) InitProject() (err error) {
 
-	log.Printf("Initialing %s [%s] %s project on path: %s", p.Name, p.SlugName, p.Kind, p.BasePath)
+	log.Printf("Initializing %s [%s] %s project on path: %s", p.Name, p.SlugName, p.Platform, p.BasePath)
 
 	//Create base folder if necessary
 	_, err = os.Stat(p.BasePath)
@@ -74,29 +124,63 @@ func (p *Project) InitProject() (err error) {
 		return
 	}
 
+	//Write profect file
+	projectFile := fmt.Sprintf("%s/prj.hcl", p.ProjectPath)
+	err = p.WriteFile("prj.hcl.tmpl", projectFile)
+	if nil != err {
+		return
+	}
+
 	//Create folder structure
 	for _, env := range p.Environments {
-		envPath := fmt.Sprintf("%s/%s/%s", p.ProjectPath, p.Kind, env)
 		for _, reg := range DefaultRegions {
-			regPath := fmt.Sprintf("%s/%s", envPath, reg)
+			regPath := fmt.Sprintf("%s/%s", env.BaseEnvPath, reg)
 			err = os.MkdirAll(regPath, os.ModePerm)
 			if nil != err {
 				return
 			}
+		}
+	}
 
-			err = p.WriteFile("prj.hcl.tmpl", fmt.Sprintf("%s/%s/%s", p.Kind, env, "prj.hcl"))
+	//Create platform files from template by platform
+	for _, pf := range PlatformFileSet[p.Platform]["platform"] {
+		platformFile := fmt.Sprintf("%s/%s", p.PlatformBasePath, pf.File)
+		err = p.WriteFile(pf.TmplFile, platformFile)
+		if nil != err {
+			return
+		}
+	}
+
+	//Create project files from template by platform
+	for _, pf := range PlatformFileSet[p.Platform]["project"] {
+		platformFile := fmt.Sprintf("%s/%s", p.ProjectPath, pf.File)
+		err = p.WriteFile(pf.TmplFile, platformFile)
+		if nil != err {
+			return
+		}
+	}
+
+	//Create environment files from template
+	for _, env := range p.Environments {
+		for _, pf := range PlatformFileSet[p.Platform]["environment"] {
+			platformFile := fmt.Sprintf("%s/%s", env.BaseEnvPath, pf.File)
+			err = p.WriteObjToFile(pf.TmplFile, platformFile, env)
 			if nil != err {
 				return
 			}
 		}
-
 	}
 
-	//Create files from template by kind
-	for _, pf := range ProjectFileSet[p.Kind] {
-		err = p.WriteFile(pf.TmplFile, pf.File)
-		if nil != err {
-			return
+	//Create region files from template
+	for _, env := range p.Environments {
+		for _, reg := range p.Regions {
+			for _, pf := range PlatformFileSet[p.Platform]["region"] {
+				regionFile := fmt.Sprintf("%s/%s/%s", env.BaseEnvPath, reg.Region, pf.File)
+				err = p.WriteObjToFile(pf.TmplFile, regionFile, reg)
+				if nil != err {
+					return
+				}
+			}
 		}
 	}
 
@@ -104,25 +188,26 @@ func (p *Project) InitProject() (err error) {
 }
 
 func (p *Project) WriteFile(tmplFile string, file string) (err error) {
+	return p.WriteObjToFile(tmplFile, file, p)
+}
 
-	tmplPath := fmt.Sprintf("%s/%s", p.AssetsBasePath, tmplFile)
-	filePath := fmt.Sprintf("%s/%s", p.ProjectPath, file)
-
-	log.Printf("Writing file %s from template %s on project on path: %s", filePath, tmplPath, p.BasePath)
+func (p *Project) WriteObjToFile(tmplFile string, file string, obj interface{}) (err error) {
+	tmplPath := fmt.Sprintf("assets/%s/%s", p.Platform, tmplFile)
+	log.Printf("Writing file %s from template %s on project on path: %s", file, tmplPath, p.ProjectPath)
 
 	pTmpl, err := template.ParseFS(p.AssetsData, tmplPath)
 	if err != nil {
 		return err
 	}
 
-	wf, err := os.Create(filePath)
+	wf, err := os.Create(file)
 	if err != nil {
 		return err
 	}
 
 	defer wf.Close()
 
-	return pTmpl.Execute(wf, p)
+	return pTmpl.Execute(wf, obj)
 }
 
 // func writeFile(project *Project, assetsData embed.FS, tmplPath string, filePath string) error {

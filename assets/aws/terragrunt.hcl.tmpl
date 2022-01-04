@@ -3,17 +3,13 @@ locals {
 
   version = "0.0.0"
 
+  prj_vars      = read_terragrunt_config(find_in_parent_folders("prj.hcl"))
   env_vars      = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-  stack_vars    = read_terragrunt_config(find_in_parent_folders("stack.hcl"))
-  location_vars = read_terragrunt_config(find_in_parent_folders("location.hcl"))
+  region_vars   = read_terragrunt_config(find_in_parent_folders("region.hcl"))
 
-  environment            = local.env_vars.locals.environment
-  subscription_id        = local.env_vars.locals.subscription_id
-  global_subscription_id = local.env_vars.locals.global_subscription_id
-
-  project    = local.stack_vars.locals.project
-  stack_name = local.stack_vars.locals.stack_name
-  region     = local.location_vars.locals.region
+  name          = local.prj_vars.locals.name  
+  environment   = local.env_vars.locals.environment
+  region        = local.region_vars.locals.region  
 }
 
 # Generate an azure provider block
