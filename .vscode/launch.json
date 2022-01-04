@@ -10,10 +10,6 @@
             "request": "launch",
             "mode": "auto",
             "program": "${fileDirname}/../main.go",
-            "preLaunchTask": {
-                "task": "",
-                "type": ""
-            },
             "args": [
                 "project", 
                 "new",
