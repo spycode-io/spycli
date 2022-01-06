@@ -3,8 +3,8 @@ package project_test
 import (
 	"testing"
 
-	"github.com/spycode-io/spycli.git/assets"
-	"github.com/spycode-io/spycli.git/project"
+	"github.com/spycode-io/spycli/assets"
+	"github.com/spycode-io/spycli/project"
 )
 
 func TestCreateAWSProject(t *testing.T) {

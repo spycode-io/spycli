@@ -7,7 +7,8 @@ import (
 	"os"
 
 	"github.com/gosimple/slug"
-	"github.com/spycode-io/spycli.git/assets"
+	"github.com/spycode-io/spycli/assets"
+	"github.com/spycode-io/spycli/model"
 )
 
 type Blueprint struct {
@@ -19,25 +20,31 @@ type Blueprint struct {
 	BluePrintPath string
 	Stack         string
 	StackPath     string
-	Regions       []string
+	AssetsData    embed.FS
+	Regions       []model.Region
+}
+
+type Module struct {
+	Name string
 }
 
 type BlueprintInterface interface {
 	InitBlueprint() error
+	WriteFile(tmplFile string, file string) (err error)
 }
 
 var (
-	BpFileTmplSet map[string]map[string][]assets.FileTmpl = map[string]map[string][]assets.FileTmpl{
-		"default": {
-			"blueprint": []assets.FileTmpl{
-				{TmplFile: "gitignore.tmpl", File: ".gitignore"},
-			},
-			"stack": []assets.FileTmpl{
-				{TmplFile: "prj.hcl.tmpl", File: "prj.hcl"},
-			},
-			"region": []assets.FileTmpl{
-				{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
-				{TmplFile: "gitignore_region.tmpl", File: ".gitignore"},
+	BpFileSet assets.FileSet = assets.FileSet{
+		RelativeRootPath: "templates/bp",
+		Set: map[string]map[string][]assets.FileTmpl{
+			"default": {
+				"blueprint": []assets.FileTmpl{
+					{TmplFile: "gitignore.tmpl", File: ".gitignore"},
+				},
+				"stack": []assets.FileTmpl{},
+				"region": []assets.FileTmpl{
+					{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
+				},
 			},
 		},
 	}
@@ -55,13 +62,20 @@ func NewBlueprint(
 	blueprint := &Blueprint{
 		Name:          name,
 		SlugName:      slug.Make(name),
-		BluePrintPath: fmt.Sprintf("%s/%s", basePath, slug.Make(name)),
-		StackPath:     fmt.Sprintf("%s/%s/%s", basePath, slug.Make(name), slug.Make(stack)),
+		BasePath:      basePath,
 		Url:           url,
 		Version:       version,
-		BasePath:      basePath,
+		BluePrintPath: fmt.Sprintf("%s/%s", basePath, slug.Make(name)),
 		Stack:         stack,
-		Regions:       regions,
+		StackPath:     fmt.Sprintf("%s/%s/%s", basePath, slug.Make(name), slug.Make(stack)),
+		AssetsData:    embed.FS{},
+		Regions:       []model.Region{{Region: "any"}},
+	}
+
+	for _, reg := range regions {
+		blueprint.Regions = append(blueprint.Regions,
+			model.Region{Region: reg},
+		)
 	}
 
 	return blueprint, blueprint.InitBlueprint()
@@ -78,14 +92,38 @@ func (b *Blueprint) InitBlueprint() (err error) {
 		err = nil
 	}
 
-	//Create platform files from template by platform
-	// for _, pf := range BpFileTmplSet["default"]["blueprint"] {
-	// 	platformFile := fmt.Sprintf("%s/%s", b.BluePrintPath, pf.File)
-	// 	err = b.WriteFile(pf.TmplFile, platformFile)
-	// 	if nil != err {
-	// 		return
-	// 	}
-	// }
+	//Create blueprint files from template
+	for _, pf := range BpFileSet.Set["default"]["blueprint"] {
+		bpFile := fmt.Sprintf("%s/%s", b.BluePrintPath, pf.File)
+		err = b.WriteFile(pf.TmplFile, bpFile)
+		if nil != err {
+			return
+		}
+	}
+
+	//Create stack files from template
+	for _, pf := range BpFileSet.Set["default"]["stack"] {
+		bpFile := fmt.Sprintf("%s/%s", b.StackPath, pf.File)
+		err = b.WriteFile(pf.TmplFile, bpFile)
+		if nil != err {
+			return
+		}
+	}
+
+	//Create region files from template
+	for _, r := range b.Regions {
+		for _, f := range BpFileSet.Set["default"]["region"] {
+			bpFile := fmt.Sprintf("%s/%s/%s", b.StackPath, r.Region, f.File)
+			err = BpFileSet.WriteObjToFile(f.TmplFile, bpFile, r)
+			if nil != err {
+				return
+			}
+		}
+	}
 
 	return
+}
+
+func (p *Blueprint) WriteFile(tmplFile string, file string) (err error) {
+	return BpFileSet.WriteObjToFile(tmplFile, file, p)
 }

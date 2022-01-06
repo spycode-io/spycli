@@ -1,4 +1,4 @@
-module github.com/spycode-io/spycli.git
+module github.com/spycode-io/spycli
 
 go 1.16
 

@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/spycode-io/spycli.git/assets"
+	"github.com/spycode-io/spycli/assets"
 )
 
 type testObj struct {

@@ -7,7 +7,8 @@ import (
 	"os"
 
 	"github.com/gosimple/slug"
-	"github.com/spycode-io/spycli.git/assets"
+	"github.com/spycode-io/spycli/assets"
+	"github.com/spycode-io/spycli/model"
 )
 
 type Project struct {
@@ -21,23 +22,9 @@ type Project struct {
 	Stack            string
 	Blueprint        string
 	BlueprintVersion string
-	Environments     []Environment
-	Regions          []Region
+	Environments     []model.Environment
+	Regions          []model.Region
 	AssetsData       embed.FS
-}
-
-type Environment struct {
-	EnvName     string
-	BaseEnvPath string
-}
-
-type Region struct {
-	Region string
-}
-
-type ProjectFile struct {
-	TmplFile string
-	File     string
 }
 
 type ProjectInterface interface {
@@ -98,13 +85,13 @@ func New(
 
 	for _, env := range environments {
 		project.Environments = append(project.Environments,
-			Environment{EnvName: env, BaseEnvPath: fmt.Sprintf("%s/%s", project.ProjectPath, env)},
+			model.Environment{EnvName: env, BaseEnvPath: fmt.Sprintf("%s/%s", project.ProjectPath, env)},
 		)
 	}
 
 	for _, reg := range regions {
 		project.Regions = append(project.Regions,
-			Region{Region: reg},
+			model.Region{Region: reg},
 		)
 	}
 

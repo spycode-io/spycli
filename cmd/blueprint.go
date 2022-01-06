@@ -5,9 +5,9 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
-	"github.com/spycode-io/spycli.git/assets"
-	"github.com/spycode-io/spycli.git/blueprint"
-	"github.com/spycode-io/spycli.git/project"
+	"github.com/spycode-io/spycli/assets"
+	"github.com/spycode-io/spycli/blueprint"
+	"github.com/spycode-io/spycli/project"
 )
 
 var (

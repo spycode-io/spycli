@@ -14,7 +14,7 @@
                 "project", 
                 "new",
                 "-n", "My Project",
-                "-d", "iac-test",
+                "-d", ".iac-test",
                 "-s", "my-stack",
                 "-b", "git@github.com:spycode-io/sample-bp.git",
                 "-v", "v0.0.0"
@@ -30,7 +30,24 @@
                 "blueprint", 
                 "new",
                 "-b", "git@github.com:spycode-io/sample-bp.git",
-                "-d", "iac-test"
+                "-d", ".iac-test",
+            ]
+        },
+        {
+            "name": "New Module",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${fileDirname}/../main.go",
+            "args": [
+                "module", 
+                "new",
+                "-d", ".iac-test",
+                "-n", "My VNET",
+                "-m", "aws/vnet",
+                "-l", "git@github.com:spycode-io/tf-modules.git",
+                "-v", "master",
+                "-s", "aws"
             ]
         },
         {
