@@ -1,24 +1,24 @@
 package cmd
 
 import (
-	"embed"
 	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
+	"github.com/spycode-io/spycli.git/assets"
 	"github.com/spycode-io/spycli.git/project"
 )
 
 var (
-	BaseDirectory, Kind, Name, Stack, Blueprint, BlueprintVersion string
-	Environments, Regions                                         []string
-	AssetData                                                     embed.FS
+	BaseDirectory, Platform, ProjectName, Stack, Blueprint, BlueprintVersion string
+	Environments, Regions                                                    []string
 )
 
 func init() {
+
 	newProjectCmd.Flags().StringVarP(&BaseDirectory, "directory", "d", ".", "Base projects directory to execute command")
-	newProjectCmd.Flags().StringVarP(&Kind, "kind", "k", "aws", "Kind of project (aws|azure)")
-	newProjectCmd.Flags().StringVarP(&Name, "name", "n", "New Project", "Name of project")
+	newProjectCmd.Flags().StringVarP(&Platform, "kind", "k", "aws", "Kind of project (aws|azure)")
+	newProjectCmd.Flags().StringVarP(&ProjectName, "name", "n", "New Project", "Name of project")
 	newProjectCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
 	newProjectCmd.Flags().StringVarP(&Blueprint, "blueprint", "b", "", "Blueprint")
 	newProjectCmd.Flags().StringVarP(&BlueprintVersion, "blueprint-version", "v", "", "Blueprint version")
@@ -43,10 +43,10 @@ var newProjectCmd = &cobra.Command{
 	Long:  `Use project new`,
 	Run: func(cmd *cobra.Command, args []string) {
 		prj, err := project.New(
-			AssetData,
+			assets.TemplatesData,
 			BaseDirectory,
-			Kind,
-			Name,
+			Platform,
+			ProjectName,
 			Stack,
 			Blueprint,
 			BlueprintVersion,
