@@ -27,7 +27,7 @@ type ModuleInterface interface {
 }
 
 var ModuleFileSet assets.FileSet = assets.FileSet{
-	RelativeRootPath: "templates/mdl",
+	AssetsPath: "templates/mdl",
 	Set: map[string]map[string][]assets.FileTmpl{
 		"default": {
 			"stack": []assets.FileTmpl{

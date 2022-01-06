@@ -17,8 +17,8 @@ func TestWriteFile(t *testing.T) {
 		Test: "Test Write File",
 	}
 
-	fileSet := &assets.FileSet{}
-	err := fileSet.WriteObjToFile("templates/test.tmpl", ".iac-test/test-file", obj)
+	fileSet := assets.NewFileSet("templates")
+	err := fileSet.WriteObjToFile("test.tmpl", ".iac-test/test-file", obj)
 	if nil != err {
 		t.Error(err)
 	}

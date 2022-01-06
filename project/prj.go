@@ -3,41 +3,22 @@ package project
 import (
 	"embed"
 	"fmt"
-	"log"
-	"os"
 
 	"github.com/gosimple/slug"
 	"github.com/spycode-io/spycli/assets"
 	"github.com/spycode-io/spycli/model"
 )
 
-type Project struct {
-	Name             string
-	SlugName         string
-	BasePath         string
-	Platform         string
-	PlatformBasePath string
-	AssetsBasePath   string
-	ProjectPath      string
-	Stack            string
-	Blueprint        string
-	BlueprintVersion string
-	Environments     []model.Environment
-	Regions          []model.Region
-	AssetsData       embed.FS
-}
-
-type ProjectInterface interface {
-	WriteFile(tmplFile string, file string) (err error)
-	// WriteObjToFile(tmplFile string, file string, obj interface{}) error
-	InitProject() error
-}
+// type ProjectInterface interface {
+// 	WriteFile(tmplFile string, file string) (err error)
+// 	InitProject() error
+// }
 
 var (
 	DefaultRegions      []string       = []string{"east-us1", "east-us2", "west-us1"}
 	DefaultEnvironments []string       = []string{"stage", "qa", "prod"}
-	ProjectFileSet      assets.FileSet = assets.FileSet{
-		RelativeRootPath: "templates/prj",
+	DefaultFileSet      assets.FileSet = assets.FileSet{
+		AssetsPath: "templates/prj",
 		Set: map[string]map[string][]assets.FileTmpl{
 			"aws": {
 				"platform": []assets.FileTmpl{
@@ -67,9 +48,9 @@ func New(
 	blueprint string,
 	blueprintVersion string,
 	environments []string,
-	regions []string) (*Project, error) {
+	regions []string) (*model.Project, error) {
 
-	project := &Project{
+	project := &model.Project{
 		Name:             name,
 		BasePath:         baseDirectory,
 		Platform:         kind,
@@ -85,7 +66,7 @@ func New(
 
 	for _, env := range environments {
 		project.Environments = append(project.Environments,
-			model.Environment{EnvName: env, BaseEnvPath: fmt.Sprintf("%s/%s", project.ProjectPath, env)},
+			model.Environment{Name: env, Path: fmt.Sprintf("%s/%s", project.ProjectPath, env)},
 		)
 	}
 
@@ -95,91 +76,91 @@ func New(
 		)
 	}
 
-	return project, project.InitProject()
+	return project, nil //project.InitProject()
 }
 
-func (p *Project) InitProject() (err error) {
+// func (p *model.Project) Init() (err error) {
 
-	log.Printf("Initializing %s [%s] %s project on path: %s", p.Name, p.SlugName, p.Platform, p.BasePath)
+// 	log.Printf("Initializing %s [%s] %s project on path: %s", p.Name, p.SlugName, p.Platform, p.BasePath)
 
-	//Create base folder if necessary
-	_, err = os.Stat(p.BasePath)
-	if os.IsNotExist(err) {
-		os.MkdirAll(p.BasePath, os.ModePerm)
-	}
+// 	//Create base folder if necessary
+// 	_, err = os.Stat(p.BasePath)
+// 	if os.IsNotExist(err) {
+// 		os.MkdirAll(p.BasePath, os.ModePerm)
+// 	}
 
-	//Create the project base foder
-	err = os.MkdirAll(p.ProjectPath, os.ModePerm)
-	if nil != err {
-		return
-	}
+// 	//Create the project base foder
+// 	err = os.MkdirAll(p.ProjectPath, os.ModePerm)
+// 	if nil != err {
+// 		return
+// 	}
 
-	//Write project file
-	projectFile := fmt.Sprintf("%s/prj.hcl", p.ProjectPath)
-	err = p.WriteFile("prj.hcl.tmpl", projectFile)
-	if nil != err {
-		return
-	}
+// 	//Write project file
+// 	// projectFile := fmt.Sprintf("%s/prj.hcl", p.ProjectPath)
+// 	// err = p.WriteFile("prj.hcl.tmpl", projectFile)
+// 	// if nil != err {
+// 	// 	return
+// 	// }
 
-	//Create folder structure
-	for _, env := range p.Environments {
-		for _, reg := range DefaultRegions {
-			regPath := fmt.Sprintf("%s/%s", env.BaseEnvPath, reg)
-			err = os.MkdirAll(regPath, os.ModePerm)
-			if nil != err {
-				return
-			}
-		}
-	}
+// 	//Create folder structure
+// 	for _, env := range p.Environments {
+// 		for _, reg := range DefaultRegions {
+// 			regPath := fmt.Sprintf("%s/%s", env.Path, reg)
+// 			err = os.MkdirAll(regPath, os.ModePerm)
+// 			if nil != err {
+// 				return
+// 			}
+// 		}
+// 	}
 
-	//Create platform files from template by platform
-	for _, pf := range ProjectFileSet.Set[p.Platform]["platform"] {
-		platformFile := fmt.Sprintf("%s/%s", p.PlatformBasePath, pf.File)
-		err = p.WriteFile(pf.TmplFile, platformFile)
-		if nil != err {
-			return
-		}
-	}
+// 	//Create platform files from template by platform
+// 	// for _, pf := range ProjectFileSet.Set[p.Platform]["platform"] {
+// 	// 	platformFile := fmt.Sprintf("%s/%s", p.PlatformBasePath, pf.File)
+// 	// 	err = p.WriteFile(pf.TmplFile, platformFile)
+// 	// 	if nil != err {
+// 	// 		return
+// 	// 	}
+// 	// }
 
-	//Create project files from template by platform
-	for _, pf := range ProjectFileSet.Set[p.Platform]["project"] {
-		platformFile := fmt.Sprintf("%s/%s", p.ProjectPath, pf.File)
-		err = p.WriteFile(pf.TmplFile, platformFile)
-		if nil != err {
-			return
-		}
-	}
+// 	//Create project files from template by platform
+// 	// for _, pf := range ProjectFileSet.Set[p.Platform]["project"] {
+// 	// 	platformFile := fmt.Sprintf("%s/%s", p.ProjectPath, pf.File)
+// 	// 	err = p.WriteFile(pf.TmplFile, platformFile)
+// 	// 	if nil != err {
+// 	// 		return
+// 	// 	}
+// 	// }
 
-	//Create environment files from template
-	for _, env := range p.Environments {
-		for _, pf := range ProjectFileSet.Set[p.Platform]["environment"] {
-			platformFile := fmt.Sprintf("%s/%s", env.BaseEnvPath, pf.File)
-			err = ProjectFileSet.WriteObjToFile(pf.TmplFile, platformFile, env)
-			if nil != err {
-				return
-			}
-		}
-	}
+// 	//Create environment files from template
+// 	for _, env := range p.Environments {
+// 		for _, pf := range ProjectFileSet.Set[p.Platform]["environment"] {
+// 			platformFile := fmt.Sprintf("%s/%s", env.Path, pf.File)
+// 			err = ProjectFileSet.WriteObjToFile(pf.TmplFile, platformFile, env)
+// 			if nil != err {
+// 				return
+// 			}
+// 		}
+// 	}
 
-	//Create region files from template
-	for _, env := range p.Environments {
-		for _, reg := range p.Regions {
-			for _, pf := range ProjectFileSet.Set[p.Platform]["region"] {
-				regionFile := fmt.Sprintf("%s/%s/%s", env.BaseEnvPath, reg.Region, pf.File)
-				err = ProjectFileSet.WriteObjToFile(pf.TmplFile, regionFile, reg)
-				if nil != err {
-					return
-				}
-			}
-		}
-	}
+// 	//Create region files from template
+// 	for _, env := range p.Environments {
+// 		for _, reg := range p.Regions {
+// 			for _, pf := range ProjectFileSet.Set[p.Platform]["region"] {
+// 				regionFile := fmt.Sprintf("%s/%s/%s", env.Path, reg.Region, pf.File)
+// 				err = ProjectFileSet.WriteObjToFile(pf.TmplFile, regionFile, reg)
+// 				if nil != err {
+// 					return
+// 				}
+// 			}
+// 		}
+// 	}
 
-	return
-}
+// 	return
+// }
 
-func (p *Project) WriteFile(tmplFile string, file string) (err error) {
-	return ProjectFileSet.WriteObjToFile(tmplFile, file, p)
-}
+// func (p *model.Project) WriteFile(tmplFile string, file string) (err error) {
+// 	return ProjectFileSet.WriteObjToFile(tmplFile, file, p)
+// }
 
 // func writeFile(project *Project, assetsData embed.FS, tmplPath string, filePath string) error {
 // 	tmpl, err := template.ParseFS(assetsData, fmt.Sprintf(tmplPath, project.Kind))

@@ -35,7 +35,7 @@ type BlueprintInterface interface {
 
 var (
 	BpFileSet assets.FileSet = assets.FileSet{
-		RelativeRootPath: "templates/bp",
+		AssetsPath: "templates/bp",
 		Set: map[string]map[string][]assets.FileTmpl{
 			"default": {
 				"blueprint": []assets.FileTmpl{

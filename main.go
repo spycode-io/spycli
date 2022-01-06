@@ -7,5 +7,3 @@ import (
 func main() {
 	cmd.Execute()
 }
-
-var Agua = "agua"
