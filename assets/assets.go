@@ -28,6 +28,7 @@ type FileSetInterface interface {
 	WithMap(platform string, fileMap map[string][]FileTmpl) *FileSet
 	WithFiles(platform string, level string, files []FileTmpl) *FileSet
 	WriteObjToFile(tmplFile string, file string, obj interface{}) error
+	WriteObjToPath(platform string, level string, basePath string, obj interface{})
 }
 
 func NewFileSet(assetsPath string) *FileSet {
@@ -87,9 +88,10 @@ func (f *FileSet) WriteObjToFile(tmplFile string, file string, obj interface{}) 
 	return pTmpl.Execute(wf, obj)
 }
 
-func (f *FileSet) WriteObjToFiles(platform string, level string, obj interface{}) (err error) {
+func (f *FileSet) WriteObjToPath(platform string, level string, basePath string, obj interface{}) (err error) {
 	for _, tf := range f.Set[platform][level] {
-		err = f.WriteObjToFile(tf.TmplFile, tf.File, obj)
+		filePath := fmt.Sprintf("%s/%s", basePath, tf.File)
+		err = f.WriteObjToFile(tf.TmplFile, filePath, obj)
 		if nil != err {
 			return
 		}

@@ -31,6 +31,6 @@ func NewGenericScafold(base *Scaffold, foo string, bar string) (gen *GenericScaf
 
 func (g *GenericScaffold) Init() (err error) {
 	log.Printf("Initializing scaffold %s on path %s", g.Name, g.BasePath)
-	g.FileSet.WriteObjToFiles("default", "generic", g)
+	g.FileSet.WriteObjToPath("default", "generic", g.ScaffoldBasePath, g)
 	return
 }
