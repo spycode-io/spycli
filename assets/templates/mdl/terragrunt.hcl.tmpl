@@ -13,8 +13,8 @@ locals {
   environment = local.env_cfg.environment  
   tf_lib_version = local.env_cfg.tf_lib_version
 
-  tf_lib = local.prj_cfg.locals.tf_lib  
   tf_module = "{{.Module}}"
+  tf_lib = local.prj_cfg.locals.tf_lib  
   tf_module_source = "${local.tf_lib}//${local.tf_module}?ref=${local.tf_lib_version}"
 }
 

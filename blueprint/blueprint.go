@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/spycode-io/spycli/assets"
 	"github.com/spycode-io/spycli/model"
 )
 
@@ -21,6 +22,18 @@ type BlueprintScaffold struct {
 type Module struct {
 	Name string
 }
+
+var (
+	DefaultFileSet map[string][]assets.FileTmpl = map[string][]assets.FileTmpl{
+		"blueprint": []assets.FileTmpl{
+			{TmplFile: "gitignore.tmpl", File: ".gitignore"},
+		},
+		"stack": []assets.FileTmpl{},
+		"region": []assets.FileTmpl{
+			{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
+		},
+	}
+)
 
 func NewBlueprint(
 	base *model.Scaffold,

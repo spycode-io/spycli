@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/spf13/cobra"
+	"github.com/spycode-io/spycli/model"
 )
 
 var rootCmd = &cobra.Command{
@@ -24,6 +25,7 @@ projects, blueprints, tf-components, etc`,
 
 var (
 	Verbose, CleanCache bool
+	Name, BasePath      string
 )
 
 func init() {
@@ -34,4 +36,14 @@ func init() {
 // Execute executes the root command.
 func Execute() error {
 	return rootCmd.Execute()
+}
+
+func initCmd(cmd *cobra.Command) {
+	cmd.PersistentFlags().StringVarP(&Name, "name", "n", "", "Element name (ex: my-project or my-blueprint)")
+	cmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", "", "Base directory where the files will be writen")
+	cmd.MarkFlagRequired("name")
+}
+
+func getScaffold(assetsPath string) *model.Scaffold {
+	return model.NewScaffold(Name, BasePath, assetsPath)
 }

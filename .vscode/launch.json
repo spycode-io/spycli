@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}/../main.go",
+            "program": "${workspaceFolder}/main.go",
             "args": [
                 "project", 
                 "new",
@@ -25,12 +25,13 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}/../main.go",
+            "program": "${workspaceFolder}/main.go",
             "args": [
-                "blueprint", 
+                "blueprint",
                 "new",
-                "-b", "git@github.com:spycode-io/sample-bp.git",
-                "-d", ".iac-test",
+                "-b", "git@github.com:spycode-io/my-business-bp.git",
+                "-n", "my-business-bp",
+                "-s", "my-stack"
             ]
         },
         {
@@ -38,7 +39,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}/../main.go",
+            "program": "${workspaceFolder}/main.go",
             "args": [
                 "module", 
                 "new",

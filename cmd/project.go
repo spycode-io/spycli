@@ -5,20 +5,19 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
-	"github.com/spycode-io/spycli/assets"
 	"github.com/spycode-io/spycli/project"
 )
 
 var (
-	BaseDirectory, Platform, ProjectName, Stack, Blueprint, BlueprintVersion string
-	Environments, Regions                                                    []string
+	Platform, ProjectName, Stack, Blueprint, BlueprintVersion string
+	Environments, Regions                                     []string
 )
 
 func init() {
 
-	newProjectCmd.Flags().StringVarP(&BaseDirectory, "directory", "d", ".", "Base projects directory to execute command")
-	newProjectCmd.Flags().StringVarP(&Platform, "kind", "k", "aws", "Kind of project (aws|azure)")
-	newProjectCmd.Flags().StringVarP(&ProjectName, "name", "n", "New Project", "Name of project")
+	initCmd(newProjectCmd)
+
+	newProjectCmd.Flags().StringVarP(&Platform, "platform", "p", "aws", "Plataform or service (aws|azure)")
 	newProjectCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
 	newProjectCmd.Flags().StringVarP(&Blueprint, "blueprint", "b", "", "Blueprint")
 	newProjectCmd.Flags().StringVarP(&BlueprintVersion, "blueprint-version", "v", "", "Blueprint version")
@@ -42,14 +41,17 @@ var newProjectCmd = &cobra.Command{
 	Short: "Create new project",
 	Long:  `Use project new`,
 	Run: func(cmd *cobra.Command, args []string) {
+
+		base := getScaffold("templates/prj")
+
 		prj, err := project.New(
-			assets.TemplatesData,
-			BaseDirectory,
+			base,
 			Platform,
-			ProjectName,
 			Stack,
 			Blueprint,
 			BlueprintVersion,
+			Library,
+			LibraryVersion,
 			Environments,
 			Regions)
 
