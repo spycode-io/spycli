@@ -40,7 +40,7 @@ func Execute() error {
 
 func initCmd(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVarP(&Name, "name", "n", "", "Element name (ex: my-project or my-blueprint)")
-	cmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", "", "Base directory where the files will be writen")
+	cmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
 	cmd.MarkFlagRequired("name")
 }
 

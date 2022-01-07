@@ -18,11 +18,15 @@ func init() {
 	initCmd(newProjectCmd)
 
 	newProjectCmd.Flags().StringVarP(&Platform, "platform", "p", "aws", "Plataform or service (aws|azure)")
-	newProjectCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
 	newProjectCmd.Flags().StringVarP(&Blueprint, "blueprint", "b", "", "Blueprint")
 	newProjectCmd.Flags().StringVarP(&BlueprintVersion, "blueprint-version", "v", "", "Blueprint version")
+	newProjectCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
+	newProjectCmd.Flags().StringVarP(&Library, "library", "l", "", "Library (ex: git@github.com:spycode-io/tf-components.git")
+	newProjectCmd.Flags().StringVarP(&LibraryVersion, "version", "k", "", "Library version (or tag if it's a git repository)")
+	newProjectCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of environments")
 	newProjectCmd.Flags().StringSliceVarP(&Environments, "environment", "e", project.DefaultEnvironments, "Pass a list of environments")
-	newProjectCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of regions")
+
+	newBlueprintCmd.MarkFlagRequired("blueprint")
 
 	projectCmd.AddCommand(newProjectCmd)
 	rootCmd.AddCommand(projectCmd)

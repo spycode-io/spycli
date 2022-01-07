@@ -17,7 +17,8 @@
                 "-d", ".iac-test",
                 "-s", "my-stack",
                 "-b", "git@github.com:spycode-io/sample-bp.git",
-                "-v", "v0.0.0"
+                "-v", "v0.0.0",
+                "-k", "v0.0.1"
             ]
         },
         {
@@ -44,7 +45,7 @@
                 "module", 
                 "new",
                 "-d", ".iac-test",
-                "-n", "My VNET",
+                "-n", "My VPC",
                 "-m", "aws/vnet",
                 "-l", "git@github.com:spycode-io/tf-modules.git",
                 "-v", "master",

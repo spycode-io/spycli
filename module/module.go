@@ -3,7 +3,6 @@ package module
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/gosimple/slug"
 	"github.com/spycode-io/spycli/assets"
@@ -27,11 +26,12 @@ type ModuleInterface interface {
 }
 
 var DefaultFileSet map[string][]assets.FileTmpl = map[string][]assets.FileTmpl{
-	"stack": {
-		{TmplFile: "gitignore.tmpl", File: ".gitignore"},
-	},
+	"stack": {},
 	"module": {
 		{TmplFile: "terragrunt.hcl.tmpl", File: "terragrunt.hcl"},
+	},
+	"region": {
+		{TmplFile: "gitignore.tmpl", File: ".gitignore"},
 	},
 }
 
@@ -49,7 +49,7 @@ func NewModule(
 		Stack:      stack,
 		StackPath:  fmt.Sprintf("%s/%s", base.BasePath, stack),
 		Module:     slug.Make(base.Name),
-		ModulePath: fmt.Sprintf("%s/%s/%s", base.BasePath, stack, slug.Make(base.Name)),
+		//ModulePath: fmt.Sprintf("%s/%s/%s", base.BasePath, stack, slug.Make(base.Name)),
 	}
 
 	for _, reg := range regions {
@@ -68,11 +68,11 @@ func (m *Module) InitModule() (err error) {
 	log.Printf("Initializing module %s [%s/%s]", m.Scaffold.Name, m.Lib, m.Module)
 
 	//Create module folder if necessary
-	_, err = os.Stat(m.ModulePath)
-	if os.IsNotExist(err) {
-		os.MkdirAll(m.ModulePath, os.ModePerm)
-		err = nil
-	}
+	// _, err = os.Stat(m.ModulePath)
+	// if os.IsNotExist(err) {
+	// 	os.MkdirAll(m.ModulePath, os.ModePerm)
+	// 	err = nil
+	// }
 
 	//Write stack files
 	err = m.Scaffold.FileSet.WriteObjToPath("default", "stack", m.StackPath, m)
@@ -81,9 +81,21 @@ func (m *Module) InitModule() (err error) {
 	}
 
 	//Write stack files
-	err = m.Scaffold.FileSet.WriteObjToPath("default", "module", m.ModulePath, m)
-	if nil != err {
-		return
+
+	//Write region files
+	for _, reg := range m.Regions {
+
+		regPath := fmt.Sprintf("%s/%s", m.StackPath, reg.Region)
+		err = m.Scaffold.FileSet.WriteObjToPath("default", "region", regPath, m)
+		if nil != err {
+			return
+		}
+
+		modulePath := fmt.Sprintf("%s/%s", regPath, m.Scaffold.SlugName)
+		err = m.Scaffold.FileSet.WriteObjToPath("default", "module", modulePath, m)
+		if nil != err {
+			return
+		}
 	}
 
 	return

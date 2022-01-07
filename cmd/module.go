@@ -20,10 +20,10 @@ func init() {
 	initCmd(newModuleCmd)
 
 	newModuleCmd.Flags().StringVarP(&Module, "module", "m", "", "Module (ex: aws/vpc)")
+	newModuleCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
 	newModuleCmd.Flags().StringVarP(&Library, "library", "l", "", "Library (ex: git@github.com:spycode-io/tf-components.git")
 	newModuleCmd.Flags().StringVarP(&LibraryVersion, "version", "v", "", "Library version (or tag if it's a git repository)")
-	newModuleCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
-	newProjectCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of regions")
+	newModuleCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of regions")
 
 	newModuleCmd.MarkFlagRequired("module")
 	newModuleCmd.MarkFlagRequired("library")
@@ -49,7 +49,7 @@ var newModuleCmd = &cobra.Command{
 	Long:  `Use module new`,
 	Run: func(cmd *cobra.Command, args []string) {
 
-		base := getScaffold("templates/tmpl")
+		base := getScaffold("templates/mdl")
 
 		mdl, err := module.NewModule(
 			base, Stack, Library, LibraryVersion, Regions)
