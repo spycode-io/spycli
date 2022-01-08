@@ -48,7 +48,7 @@ var newProjectCmd = &cobra.Command{
 
 		base := getScaffold("templates/prj")
 
-		prj, err := project.New(
+		prj, err := project.NewProject(
 			base,
 			Platform,
 			Stack,

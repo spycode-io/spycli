@@ -1,6 +1,21 @@
 package project
 
-import "github.com/spycode-io/spycli/assets"
+import (
+	"github.com/spycode-io/spycli/assets"
+	"github.com/spycode-io/spycli/model"
+)
+
+type ProjectScaffold struct {
+	model.Scaffold
+	Platform         string
+	PlatformPath     string
+	ProjectPath      string
+	Stack            string
+	Blueprint        string
+	BlueprintVersion string
+	Environments     []model.Environment
+	Regions          []model.Region
+}
 
 var (
 	DefaultRegions      []string       = []string{"east-us1", "east-us2", "west-us1"}
@@ -11,6 +26,7 @@ var (
 			"aws": {
 				"platform": []assets.FileTmpl{
 					{TmplFile: "gitignore.tmpl", File: ".gitignore"},
+					{TmplFile: "terragrunt.hcl.tmpl", File: "terragrunt.hcl"},
 				},
 				"project": []assets.FileTmpl{
 					{TmplFile: "prj.hcl.tmpl", File: "prj.hcl"},
@@ -20,7 +36,6 @@ var (
 				},
 				"region": []assets.FileTmpl{
 					{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
-					{TmplFile: "gitignore_region.tmpl", File: ".gitignore"},
 				},
 			},
 		},

@@ -11,7 +11,7 @@ func TestCreateAWSProject(t *testing.T) {
 
 	baseScaffold := model.NewScaffold("My Project", ".iac-test", "templates/prj")
 
-	_, err := project.New(
+	_, err := project.NewProject(
 		baseScaffold,
 		"aws",
 		"my-stack",

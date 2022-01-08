@@ -25,11 +25,11 @@ type Module struct {
 
 var (
 	DefaultFileSet map[string][]assets.FileTmpl = map[string][]assets.FileTmpl{
-		"blueprint": []assets.FileTmpl{
+		"blueprint": {
 			{TmplFile: "gitignore.tmpl", File: ".gitignore"},
 		},
-		"stack": []assets.FileTmpl{},
-		"region": []assets.FileTmpl{
+		"stack": {},
+		"region": {
 			{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
 		},
 	}

@@ -8,18 +8,7 @@ import (
 	"github.com/spycode-io/spycli/model"
 )
 
-type ProjectScaffold struct {
-	model.Scaffold
-	Platform         string
-	ProjectPath      string
-	Stack            string
-	Blueprint        string
-	BlueprintVersion string
-	Environments     []model.Environment
-	Regions          []model.Region
-}
-
-func New(
+func NewProject(
 	base *model.Scaffold,
 	plaform string,
 	stack string,
@@ -36,16 +25,18 @@ func New(
 		Stack:            stack,
 		Blueprint:        blueprint,
 		BlueprintVersion: blueprintVersion,
-		ProjectPath:      fmt.Sprintf("%s/%s", base.BasePath, base.SlugName),
+		PlatformPath:     fmt.Sprintf("%s/%s", base.BasePath, plaform),
+		ProjectPath:      fmt.Sprintf("%s/%s/%s", base.BasePath, plaform, base.SlugName),
 	}
 
 	for _, env := range environments {
 		project.Environments = append(project.Environments,
 			model.Environment{
-				Name:           env,
-				Path:           fmt.Sprintf("%s/%s", project.ProjectPath, env),
-				Library:        library,
-				LibraryVersion: libraryVersion,
+				Name:             env,
+				Path:             fmt.Sprintf("%s/%s", project.ProjectPath, env),
+				Library:          library,
+				LibraryVersion:   libraryVersion,
+				BlueprintVersion: blueprintVersion,
 			},
 		)
 	}
@@ -72,6 +63,12 @@ func (p *ProjectScaffold) Init() (err error) {
 	if os.IsNotExist(err) {
 		os.MkdirAll(p.ProjectPath, os.ModePerm)
 		err = nil
+	}
+
+	//Write project level files
+	err = p.FileSet.WriteObjToPath(p.Platform, "platform", p.PlatformPath, p)
+	if nil != err {
+		return
 	}
 
 	//Write project level files
