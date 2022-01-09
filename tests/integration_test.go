@@ -14,7 +14,7 @@ func TestLocalFlow(t *testing.T) {
 
 	//Create a new blueprint
 	bpScaffold := model.NewScaffold(
-		"BP Test",
+		"My Blueprint",
 		".iac-test", "templates/bp")
 
 	bp, err := blueprint.NewBlueprint(
@@ -30,12 +30,12 @@ func TestLocalFlow(t *testing.T) {
 
 	//Create a new project
 	prj, err := project.NewProject(
-		model.NewScaffold("Prj Test", ".iac-test", "templates/prj"),
+		model.NewScaffold("My Project", ".iac-test", "templates/prj"),
 		"aws",
 		"web-stack",
 		"git@github.com:spycode-io/bp-test.git",
 		"v0.0.0",
-		"../../../../tf-modules",
+		"../../../../../tf-aws-modules",
 		"",
 		project.DefaultEnvironments, project.DefaultRegions)
 
@@ -46,12 +46,12 @@ func TestLocalFlow(t *testing.T) {
 	//Create new modules
 	anyRegionBasePath := fmt.Sprintf(".iac-test/%s/%s/_any", bp.SlugName, bp.Stack)
 
-	vpc, err := createModule(anyRegionBasePath, "Test VPC", "aws/vpc")
+	vpc, err := createModule(anyRegionBasePath, "My VPC", "vpc")
 	if nil != err || nil == vpc {
 		t.Error(err)
 	}
 
-	vms, err := createModule(anyRegionBasePath, "Test VMS", "aws/vm")
+	vms, err := createModule(anyRegionBasePath, "My VMS", "vm")
 	if nil != err || nil == vms {
 		t.Error(err)
 	}

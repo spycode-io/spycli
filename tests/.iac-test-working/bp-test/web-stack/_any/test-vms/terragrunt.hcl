@@ -2,6 +2,10 @@ include {
   path = find_in_parent_folders()
 }
 
+dependency "vpc" {
+  config_path = "../test-vpc"
+}
+
 locals {
   
   prj_vars    = yamldecode(file(find_in_parent_folders("prj.yml")))
@@ -12,8 +16,8 @@ locals {
   environment = local.env_vars.environment
   region = local.region_vars.region
 
-  name = "{{.Scaffold.SlugName}}-${local.environment}"
-  module = "{{.Module}}"
+  name = "vm-${local.environment}"
+  module = "aws/vm"
 
   library = local.env_vars.library
   library_version = local.env_vars.library_version
@@ -35,4 +39,14 @@ terraform {
 
 inputs = {
   tags = local.tags
+  vms = [
+    {
+      name = "app"
+      instance_type = "t3.micro"
+      availability_zone = "us-east-1a"
+      subnet_id = dependency.vpc.outputs.private_subnet_ids[0]
+      private_ips = ["10.0.1.100"]
+      security_groups = []
+    }
+  ]
 }

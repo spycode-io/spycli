@@ -25,8 +25,7 @@ func NewProject(
 		Stack:            stack,
 		Blueprint:        blueprint,
 		BlueprintVersion: blueprintVersion,
-		PlatformPath:     fmt.Sprintf("%s/%s", base.BasePath, plaform),
-		ProjectPath:      fmt.Sprintf("%s/%s/%s", base.BasePath, plaform, base.SlugName),
+		ProjectPath:      fmt.Sprintf("%s/%s", base.BasePath, base.SlugName),
 	}
 
 	for _, env := range environments {

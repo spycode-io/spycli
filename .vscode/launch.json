@@ -46,10 +46,7 @@
                 "new",
                 "-d", ".iac-test",
                 "-n", "My VPC",
-                "-m", "aws/vnet",
-                "-l", "git@github.com:spycode-io/tf-modules.git",
-                "-v", "master",
-                "-s", "aws"
+                "-m", "vpc"
             ]
         },
         {

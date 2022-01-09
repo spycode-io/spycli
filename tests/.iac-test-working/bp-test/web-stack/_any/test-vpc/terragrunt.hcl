@@ -12,8 +12,8 @@ locals {
   environment = local.env_vars.environment
   region = local.region_vars.region
 
-  name = "{{.Scaffold.SlugName}}-${local.environment}"
-  module = "{{.Module}}"
+  name = "vpc-${local.environment}"
+  module = "aws/vpc"
 
   library = local.env_vars.library
   library_version = local.env_vars.library_version

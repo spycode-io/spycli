@@ -18,24 +18,24 @@ type ProjectScaffold struct {
 }
 
 var (
-	DefaultRegions      []string       = []string{"us-east-1"}
-	DefaultEnvironments []string       = []string{"stage", "qa", "prod"}
-	DefaultFileSet      assets.FileSet = assets.FileSet{
+	DefaultRegions      []string = []string{"us-east-1"}
+	DefaultEnvironments []string = []string{"dev"}
+
+	DefaultFileSet assets.FileSet = assets.FileSet{
 		AssetsPath: "templates/prj",
 		Set: map[string]map[string][]assets.FileTmpl{
 			"aws": {
-				"platform": []assets.FileTmpl{
+				"platform": []assets.FileTmpl{},
+				"project": []assets.FileTmpl{
+					{TmplFile: "prj.yml.tmpl", File: "prj.yml"},
 					{TmplFile: "gitignore.tmpl", File: ".gitignore"},
 					{TmplFile: "terragrunt.hcl.tmpl", File: "terragrunt.hcl"},
 				},
-				"project": []assets.FileTmpl{
-					{TmplFile: "prj.hcl.tmpl", File: "prj.hcl"},
-				},
 				"environment": []assets.FileTmpl{
-					{TmplFile: "env.hcl.tmpl", File: "env.hcl"},
+					{TmplFile: "env.yml.tmpl", File: "env.yml"},
 				},
 				"region": []assets.FileTmpl{
-					{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
+					{TmplFile: "region.yml.tmpl", File: "region.yml"},
 				},
 			},
 		},

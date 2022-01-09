@@ -9,9 +9,9 @@ import (
 
 func TestNewModule(t *testing.T) {
 
-	base := model.NewScaffold("My Module", ".iac-test", "templates/mdl")
+	base := model.NewScaffold("My VPC", ".iac-test", "templates/mdl")
 
-	_, err := module.NewModule(base, "aws/vpc")
+	_, err := module.NewModule(base, "vpc")
 
 	if nil != err {
 		t.Error(err)
