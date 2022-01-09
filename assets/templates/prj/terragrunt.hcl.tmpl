@@ -16,17 +16,10 @@ locals {
 generate "provider" {
   path      = "provider.tf"
   if_exists = "overwrite_terragrunt"
-  contents  = >>EOF
+  
+  contents  = <<EOF
 provider "aws" {
-  version = "~> 3.0"
   region  = "${local.region}"
-  default_tags {
-    tags = {
-      Project     = "${local.project}"
-      Environment = "${local.environment}"
-      Region      = "${local.region}"
-    }
-  }
 }
 EOF
 }

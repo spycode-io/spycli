@@ -18,7 +18,7 @@ type ProjectScaffold struct {
 }
 
 var (
-	DefaultRegions      []string       = []string{"east-us1", "east-us2", "west-us1"}
+	DefaultRegions      []string       = []string{"us-east-1"}
 	DefaultEnvironments []string       = []string{"stage", "qa", "prod"}
 	DefaultFileSet      assets.FileSet = assets.FileSet{
 		AssetsPath: "templates/prj",

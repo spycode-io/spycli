@@ -35,11 +35,12 @@ var InstallFileSet map[string][]assets.FileTmpl = map[string][]assets.FileTmpl{
 }
 
 func NewModule(
-	base *model.Scaffold) (*Module, error) {
+	base *model.Scaffold,
+	moduleName string) (*Module, error) {
 
 	module := &Module{
 		Scaffold:   base,
-		Module:     slug.Make(base.Name),
+		Module:     moduleName,
 		ModulePath: fmt.Sprintf("%s/%s", base.BasePath, slug.Make(base.Name)),
 	}
 

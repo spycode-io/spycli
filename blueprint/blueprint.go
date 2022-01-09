@@ -49,7 +49,7 @@ func NewBlueprint(
 		BluePrintPath: fmt.Sprintf("%s/%s", base.BasePath, base.SlugName),
 		Stack:         stack,
 		StackPath:     fmt.Sprintf("%s/%s/%s", base.BasePath, base.SlugName, stack),
-		Regions:       []model.Region{{Region: "any"}},
+		Regions:       []model.Region{{Region: "_any"}},
 	}
 
 	for _, reg := range regions {

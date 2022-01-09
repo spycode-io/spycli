@@ -11,7 +11,7 @@ func TestNewModule(t *testing.T) {
 
 	base := model.NewScaffold("My Module", ".iac-test", "templates/mdl")
 
-	_, err := module.NewModule(base)
+	_, err := module.NewModule(base, "aws/vpc")
 
 	if nil != err {
 		t.Error(err)

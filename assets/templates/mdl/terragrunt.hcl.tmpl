@@ -3,22 +3,30 @@ include {
 }
 
 locals {
-  prj_cfg    = read_terragrunt_config(find_in_parent_folders("prj.hcl"))
-  env_cfg    = read_terragrunt_config(find_in_parent_folders("env.hcl"))
-  region_cfg = read_terragrunt_config(find_in_parent_folders("region.hcl"))
   
+  prj_vars    = read_terragrunt_config(find_in_parent_folders("prj.hcl"))
+  env_vars    = read_terragrunt_config(find_in_parent_folders("env.hcl"))
+  region_vars = read_terragrunt_config(find_in_parent_folders("region.hcl"))
   
-  name = "{{.Scaffold.Name}}"
-  prj_name = prj_cfg.locals.name
-  prj_slug_name = prj_slug_name
-  stack = stack
-  environment = environment    
-  
-  library = local.env_cfg.library
-  library_version = local.env_cfg.library_version
+  prj_slug_name = local.prj_vars.locals.slug_name
+  environment = local.env_vars.locals.environment
+  region = local.region_vars.locals.region
+
+  name = "{{.Scaffold.SlugName}}-${local.environment}"
   module = "{{.Module}}"
-  
-  tf_module_source = "${local.library}//${local.module}?ref=${local.library_version}"
+
+  library = local.env_vars.locals.library
+  library_version = local.env_vars.locals.library_version
+  tf_module_source = "${local.env_vars.locals.library}//${local.module}${local.library_version}"
+
+  tags = {
+    Name = local.name
+    Project = local.prj_slug_name
+    Environment = local.environment
+    Region = local.region
+    Module = local.module
+    Source = local.tf_module_source
+  }
 }
 
 terraform {
@@ -26,5 +34,5 @@ terraform {
 }
 
 inputs = {
-  metadata = local.metadata
+  tags = local.tags
 }
