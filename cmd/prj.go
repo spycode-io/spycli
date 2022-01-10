@@ -34,8 +34,12 @@ func init() {
 	initProjectCmd.PersistentFlags().BoolVarP(&LinkInit, "link", "l", false, "Base directory where the files will be writen")
 	initProjectCmd.MarkFlagRequired("directory")
 
+	cleanProjectCmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
+	cleanProjectCmd.MarkFlagRequired("directory")
+
 	projectCmd.AddCommand(newProjectCmd)
 	projectCmd.AddCommand(initProjectCmd)
+	//projectCmd.AddCommand(cleanProjectCmd)
 
 	rootCmd.AddCommand(projectCmd)
 }
@@ -50,10 +54,10 @@ var newProjectCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create new project",
 	Long: `Use project new
-new: creates a new project
+new: creates a new project with local reference for blueprint and components
 Ex:
 
-spycli project new -n "Prj Simple Web App" -b ../bp-aws-nearform -s simple-web-app -l "../../../../tf-modules-aws" -r us-east-1 -e dev -e prd
+spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -l tf-modules-aws -r us-east-1 -e dev -e prd
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -89,6 +93,20 @@ spycli project init`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		err := project.InitProject(BasePath, LinkInit)
+
+		if nil != err {
+			log.Fatal(err)
+		}
+	},
+}
+
+var cleanProjectCmd = &cobra.Command{
+	Use:   "clean",
+	Short: "Clean a project",
+	Long:  `Use project clean to remove all bp files`,
+	Run: func(cmd *cobra.Command, args []string) {
+
+		err := project.CleanStackFolder(BasePath)
 
 		if nil != err {
 			log.Fatal(err)

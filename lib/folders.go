@@ -96,41 +96,4 @@ func LinkChild(source string, dest string, ignoreFolders []string, verbose bool)
 	err = os.Symlink(sourcePath, destinyPath)
 
 	return
-
-	// directory, _ := os.Open(source)
-	// objects, err := directory.Readdir(-1)
-	// if err != nil {
-	// 	return
-	// }
-
-	// for _, obj := range objects {
-	// 	var sourcefilepointer, destinationfilepointer string
-
-	// 	sourcefilepointer, err = filepath.Abs(source + "/" + obj.Name())
-	// 	if err != nil {
-	// 		return
-	// 	}
-
-	// 	destinationfilepointer, err = filepath.Abs(dest + "/" + obj.Name())
-
-	// 	//Verify if folder is ignored
-	// 	if obj.IsDir() && StringInSlice(obj.Name(), ignoreFolders) {
-	// 		if verbose {
-	// 			log.Print(fmt.Sprintf("ignoring %s", destinationfilepointer))
-	// 		}
-	// 		continue
-	// 	}
-
-	// 	if obj.IsDir() {
-	// 		if verbose {
-	// 			log.Printf("Linking folder %s -> %s", sourcefilepointer, destinationfilepointer)
-	// 		}
-	// 		err = os.Symlink(sourcefilepointer, destinationfilepointer)
-	// 	}
-
-	// 	if err != nil {
-	// 		return
-	// 	}
-	// }
-	// return
 }

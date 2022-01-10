@@ -24,6 +24,7 @@ type ProjectConfig struct {
 	BluePrintPath string   `yaml:"blueprintPath"`
 	Stack         string   `yaml:"stack"`
 	BasePath      string   `yaml:"basePath"`
+	ProjectPath   string   `yaml:"projectPath"`
 	Ignore        []string `yaml:"ignore"`
 }
 

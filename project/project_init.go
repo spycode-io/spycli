@@ -13,10 +13,17 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+var DefaultIgnoredFiles []string = []string{"prj.yml", "env.yml", "region.yml", ".git"}
+
 func InitProject(basePath string, linkInit bool) (err error) {
 
-	log.Printf("Initializing project on %s", basePath)
-	prjConfigFiles, err := GetConfigFiles(basePath, "prj.yml")
+	fullBasePath, err := filepath.Abs(basePath)
+	if err != nil {
+		return
+	}
+
+	log.Printf("Initializing project on %s", fullBasePath)
+	prjConfigFiles, err := GetConfigFiles(fullBasePath, "prj.yml")
 
 	if err != nil {
 		return
@@ -36,7 +43,7 @@ func InitProject(basePath string, linkInit bool) (err error) {
 
 func DoInit(prjConfig *ProjectConfig, linkInit bool) (err error) {
 
-	regionConfigFiles, err := GetConfigFiles(prjConfig.BasePath, "region.yml")
+	regionConfigFiles, err := GetConfigFiles(prjConfig.ProjectPath, "region.yml")
 
 	if err != nil {
 		return
@@ -81,11 +88,19 @@ func GetProjectConfig(filePath string) (prjConfig *ProjectConfig, err error) {
 		return
 	}
 
-	prjConfig.BasePath, err = filepath.Abs(filepath.Dir(filePath))
+	prjConfig.ProjectPath, err = filepath.Abs(filepath.Dir(filePath))
 	if err != nil {
 		return
 	}
-	prjConfig.BluePrintPath, err = filepath.Abs(prjConfig.BluePrint)
+
+	prjConfig.BasePath, err = filepath.Abs(filepath.Dir(filepath.Dir(filePath)))
+	if err != nil {
+		return
+	}
+
+	//for local blueprint
+	prjConfig.BluePrintPath, err = filepath.Abs(fmt.Sprintf("%s/%s", prjConfig.BasePath, prjConfig.BluePrint))
+	prjConfig.Ignore = append(prjConfig.Ignore, DefaultEnvironments...)
 
 	return
 }
@@ -126,20 +141,18 @@ func GetConfigFiles(location string, fileName string) (configFiles []string, err
 
 func LinkBlueprintFolders(workingFolder string, destinyFolder string, ignoreFolders []string, verbose bool) (err error) {
 
-	log.Printf("Linking blueprint folder %s -> %s", workingFolder, destinyFolder)
-
 	folders, err := ioutil.ReadDir(workingFolder)
 
 	for _, f := range folders {
 
-		if f.IsDir() && f.Name() != ".git" && !lib.StringInSlice(f.Name(), ignoreFolders) {
+		if f.IsDir() && !lib.StringInSlice(f.Name(), ignoreFolders) {
 
 			source := fmt.Sprintf("%s/%s", workingFolder, f.Name())
 			dest := fmt.Sprintf("%s/%s", destinyFolder, f.Name())
 
-			CleanStackFolder(dest, verbose)
+			log.Printf("Linking blueprint folder %s -> %s", source, dest)
 
-			log.Println(source)
+			CleanStackFolder(dest)
 			err = lib.LinkChild(source, dest, ignoreFolders, verbose)
 		}
 	}
@@ -147,25 +160,18 @@ func LinkBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 	return
 }
 
-func CleanStackFolder(stackFolder string, verbose bool) (err error) {
-	if verbose {
-		log.Print("Cleaning folder ", stackFolder)
-	}
+func CleanStackFolder(stackFolder string) (err error) {
+	log.Println("Cleaning folder ", stackFolder)
 
-	files, err := os.ReadDir(stackFolder)
+	f, err := os.Stat(stackFolder)
 	if err != nil {
 		return
 	}
 
-	for _, f := range files {
-		if !f.Type().IsRegular() {
-			fpath := filepath.Join(stackFolder, f.Name())
-			if verbose {
-				log.Print("Deleting folder ", fpath)
-			}
-			os.RemoveAll(fpath)
-		}
+	if !lib.StringInSlice(f.Name(), DefaultIgnoredFiles) {
+		os.RemoveAll(stackFolder)
 	}
+
 	return
 }
 
@@ -174,7 +180,8 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 	opt := cp.Options{
 		Skip: func(src string) (bool, error) {
 			f, err := os.Stat(src)
-			doCopy := f.IsDir() || f.Name() != ".git" && !lib.StringInSlice(f.Name(), ignoreFolders)
+			doCopy := f.IsDir() && !lib.StringInSlice(f.Name(), ignoreFolders)
+			log.Printf("Copping blueprint folder %s", src)
 			return !doCopy, err
 		},
 	}
@@ -184,8 +191,6 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 	for _, f := range folders {
 		source := fmt.Sprintf("%s/%s", workingFolder, f.Name())
 		dest := fmt.Sprintf("%s/%s", destinyFolder, f.Name())
-
-		log.Printf("Copping blueprint folder %s -> %s", source, dest)
 
 		err = cp.Copy(source, dest, opt)
 

@@ -56,6 +56,31 @@
             "mode": "test",
             "program": "${file}",
             "showLog": true
-        }
+        },
+        {
+            "name": "Init Project",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "project", 
+                "init",
+                "-d", "/home/g/Projects/nearform/demo/iac-demo"
+            ]
+        },
+        {
+            "name": "Init Project With Links",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "project", 
+                "init",
+                "-d", "/home/g/Projects/nearform/demo/iac-demo",
+                "-l", "true"
+            ]
+        },
     ]
 }
