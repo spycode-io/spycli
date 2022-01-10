@@ -1,6 +1,0 @@
-name: Prj Test
-slug_name: prj-test
-blueprint: git@github.com:spycode-io/bp-test.git
-stack: web-stack
-ignore: []
-

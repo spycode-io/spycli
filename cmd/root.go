@@ -19,7 +19,7 @@ var rootCmd = &cobra.Command{
  ███████║██║        ██║   ╚██████╗███████╗██║
  ╚══════╝╚═╝        ╚═╝    ╚═════╝╚══════╝╚═╝
 												
-Spy CLI is a CLI library for work with iac
+SpyCLI is a CLI library for work with iac
 projects, blueprints, tf-components, etc`,
 }
 
@@ -40,8 +40,7 @@ func Execute() error {
 
 func initCmd(cmd *cobra.Command) {
 	cmd.PersistentFlags().StringVarP(&Name, "name", "n", "", "Element name (ex: my-project or my-blueprint)")
-	cmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
-	cmd.MarkFlagRequired("name")
+	cmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", "", "Base directory where the files will be writen")
 }
 
 func getScaffold(assetsPath string) *model.Scaffold {

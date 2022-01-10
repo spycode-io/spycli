@@ -17,6 +17,21 @@ type ProjectScaffold struct {
 	Regions          []model.Region
 }
 
+type ProjectConfig struct {
+	Name          string   `yaml:"name"`
+	SlugName      string   `yaml:"slugName"`
+	BluePrint     string   `yaml:"blueprint"`
+	BluePrintPath string   `yaml:"blueprintPath"`
+	Stack         string   `yaml:"stack"`
+	BasePath      string   `yaml:"basePath"`
+	Ignore        []string `yaml:"ignore"`
+}
+
+type RegionConfig struct {
+	Region   string `yaml:"region"`
+	BasePath string `yaml:"basePath"`
+}
+
 var (
 	DefaultRegions      []string = []string{"us-east-1"}
 	DefaultEnvironments []string = []string{"dev"}

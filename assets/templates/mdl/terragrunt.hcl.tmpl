@@ -8,7 +8,7 @@ locals {
   env_vars    = yamldecode(file(find_in_parent_folders("env.yml")))
   region_vars = yamldecode(file(find_in_parent_folders("region.yml")))
   
-  prj_slug_name = local.prj_vars.slug_name
+  prj_slug_name = local.prj_vars.slugName
   environment = local.env_vars.environment
   region = local.region_vars.region
 

@@ -16,28 +16,30 @@ var (
 
 func init() {
 
-	initCmd(newModuleCmd)
+	initCmd(includeModuleCmd)
 
-	newModuleCmd.Flags().StringVarP(&Module, "module", "m", "", "Module (ex: aws/vpc)")
-	newModuleCmd.MarkFlagRequired("module")
+	includeModuleCmd.Flags().StringVarP(&Module, "module", "m", "", "Module (ex: aws/vpc)")
+	includeModuleCmd.MarkFlagRequired("module")
 
-	moduleCmd.AddCommand(newModuleCmd)
+	moduleCmd.AddCommand(includeModuleCmd)
 	rootCmd.AddCommand(moduleCmd)
 }
 
 var moduleCmd = &cobra.Command{
 	Use:   "module",
 	Short: "Manipulate modules",
-	Long: `Use module commands
-new: creates a new module
-install: install a module
-`,
+	Long:  `Use module commands`,
 }
 
-var newModuleCmd = &cobra.Command{
-	Use:   "new",
-	Short: "Create new module",
-	Long:  `Use module new`,
+var includeModuleCmd = &cobra.Command{
+	Use:   "include",
+	Short: "Include module",
+	Long: `include: includes a new module in a blueprint region
+
+Ex: To create a vpc module called web-app-vpc
+spycli module new -m vpc -n "VPC Web App"
+
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		base := getScaffold("templates/mdl")

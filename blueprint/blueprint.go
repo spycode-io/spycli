@@ -30,7 +30,7 @@ var (
 		},
 		"stack": {},
 		"region": {
-			{TmplFile: "region.hcl.tmpl", File: "region.hcl"},
+			{TmplFile: "region.yml.tmpl", File: "region.yml"},
 		},
 	}
 )

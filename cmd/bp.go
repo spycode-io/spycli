@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/spycode-io/spycli/blueprint"
-	"github.com/spycode-io/spycli/project"
 )
 
 var (
@@ -21,7 +20,7 @@ func init() {
 	newBlueprintCmd.Flags().StringVarP(&Blueprint, "blueprint", "b", "", "Blueprint")
 	newBlueprintCmd.Flags().StringVarP(&BlueprintVersion, "version", "v", "v0.0.0", "Blueprint version")
 	newBlueprintCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
-	newBlueprintCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of regions")
+	newBlueprintCmd.Flags().StringSliceVarP(&Regions, "region", "r", []string{}, "Pass a list of regions")
 
 	newBlueprintCmd.MarkFlagRequired("blueprint")
 	newBlueprintCmd.MarkFlagRequired("stack")
@@ -33,15 +32,17 @@ func init() {
 var blueprintCmd = &cobra.Command{
 	Use:   "blueprint",
 	Short: "Manipulate iac blueprints",
-	Long: `Use blueprint commands
-new: creates a new blueprint
-`,
+	Long:  `Use project new`,
 }
 
 var newBlueprintCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create new project",
-	Long:  `Use project new`,
+	Long: `Use blueprint commands
+	new: creates a new blueprint
+	
+	Ex:
+	spycli blueprint new -n "BP AWS Nearform" -s simple-web-app -b "git@github.com:spycode-io/bp-test.git" -r us-east-1`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		base := getScaffold("templates/bp")
