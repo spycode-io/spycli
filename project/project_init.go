@@ -170,27 +170,22 @@ func CleanStackFolder(stackFolder string, ignoreFolders []string) (err error) {
 
 func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFolders []string, verbose bool) (err error) {
 
-	opt := cp.Options{
-		Skip: func(src string) (bool, error) {
-			skip, err := skipFile(src, ignoreFolders)
-			if !skip {
-				log.Printf("Copying file %s", src)
-			}
-			return skip, err
-		},
-	}
-
 	folders, err := ioutil.ReadDir(workingFolder)
 
 	for _, f := range folders {
-		source := fmt.Sprintf("%s/%s", workingFolder, f.Name())
-		dest := fmt.Sprintf("%s/%s", destinyFolder, f.Name())
 
-		CleanStackFolder(dest, ignoreFolders)
-		err = cp.Copy(source, dest, opt)
+		if skip, _ := skipFile(f.Name(), ignoreFolders); !skip {
 
-		if nil != err {
-			return
+			source := fmt.Sprintf("%s/%s", workingFolder, f.Name())
+			dest := fmt.Sprintf("%s/%s", destinyFolder, f.Name())
+
+			log.Printf("Copying blueprint folder %s -> %s", source, dest)
+
+			CleanStackFolder(dest, ignoreFolders)
+			err = cp.Copy(source, dest)
+			if nil != err {
+				return
+			}
 		}
 	}
 
@@ -209,7 +204,7 @@ func skipFile(path string, ignoreFolders []string) (skip bool, err error) {
 	if nil == err {
 		skip = lib.StringInSlice(f.Name(), ignoreFolders)
 	} else {
-		lib.StringInSlice(path, ignoreFolders)
+		skip = lib.StringInSlice(path, ignoreFolders)
 	}
 
 	if skip {

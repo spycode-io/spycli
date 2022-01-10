@@ -60,7 +60,7 @@ Ex:
 
 Create a local solution with all folders (project, blueprint and modules) in same folder
 
-spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -l tf-modules-aws -r us-east-1 -e dev -e prd -h ../../../../
+spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -l tf-modules-aws -r us-east-1 -e dev -e prd -q "../../../../"
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {

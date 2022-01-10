@@ -39,10 +39,10 @@ var newBlueprintCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create new project",
 	Long: `Use blueprint commands
-	new: creates a new blueprint
-	
-	Ex:
-	spycli blueprint new -n "BP AWS Nearform" -s simple-web-app -b "git@github.com:spycode-io/bp-test.git" -r us-east-1`,
+new: creates a new blueprint
+Ex:
+
+spycli blueprint new -n "BP AWS Nearform" -s simple-web-app -b "git@github.com:spycode-io/bp-test.git" -r us-east-1`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		base := getScaffold("templates/bp")
