@@ -38,7 +38,7 @@ func TestLinkingFiles(t *testing.T) {
 	}
 }
 
-func TestCoppingFiles(t *testing.T) {
+func TestCopyingFiles(t *testing.T) {
 	os.RemoveAll(".iac-test/source")
 	os.RemoveAll(".iac/destiny")
 
@@ -93,6 +93,7 @@ func NewProjectStructure(t *testing.T) (*project.ProjectScaffold, error) {
 		".iac-test/bp-test",
 		"v0.0.0",
 		"../../../../tf-aws-modules",
+		"",
 		"",
 		project.DefaultEnvironments, project.DefaultRegions)
 }

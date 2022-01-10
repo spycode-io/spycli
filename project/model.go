@@ -52,6 +52,7 @@ var (
 				},
 				"region": []assets.FileTmpl{
 					{TmplFile: "region.yml.tmpl", File: "region.yml"},
+					{TmplFile: "gitignore_region.tmpl", File: ".gitignore"},
 				},
 			},
 		},

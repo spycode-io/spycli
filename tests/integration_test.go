@@ -12,7 +12,7 @@ import (
 	"github.com/spycode-io/spycli/project"
 )
 
-func TestLocalFlow(t *testing.T) {
+func TestIntegrationLocalFlow(t *testing.T) {
 
 	//Cleam test folder
 	os.RemoveAll(".iac-test")
@@ -44,6 +44,7 @@ func TestLocalFlow(t *testing.T) {
 		"v0.0.0",
 		"tf-aws-modules",
 		"",
+		"../../../../",
 		project.DefaultEnvironments, project.DefaultRegions)
 
 	if nil != err || nil == prj {
@@ -104,6 +105,7 @@ func TestRemoteFlow(t *testing.T) {
 		"v0.0.0",
 		"tf-aws-modules",
 		"",
+		"../../../../",
 		project.DefaultEnvironments, project.DefaultRegions)
 
 	if nil != err || nil == prj {

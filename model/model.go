@@ -9,11 +9,12 @@ import (
 
 /* Entities */
 type Environment struct {
-	Name             string
-	Path             string
-	BlueprintVersion string
-	Library          string
-	LibraryVersion   string
+	Name                string
+	Path                string
+	BlueprintVersion    string
+	Library             string
+	LibraryVersion      string
+	LibraryRelativePath string
 }
 
 type Region struct {

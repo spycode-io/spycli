@@ -56,11 +56,10 @@ func DoInit(prjConfig *ProjectConfig, linkInit bool) (err error) {
 			return
 		}
 
-		//add modules from _any folder
+		regFolder := filepath.Base(regConfig.BasePath)
 		source := fmt.Sprintf("%s/%s/%s", prjConfig.BluePrintPath, prjConfig.Stack, "_any")
 		SyncBlueprintFolders(source, regConfig.BasePath, prjConfig.Ignore, linkInit)
 
-		regFolder := filepath.Base(regConfig.BasePath)
 		source = fmt.Sprintf("%s/%s/%s", prjConfig.BluePrintPath, prjConfig.Stack, regFolder)
 		SyncBlueprintFolders(source, regConfig.BasePath, prjConfig.Ignore, linkInit)
 	}
@@ -100,7 +99,7 @@ func GetProjectConfig(filePath string) (prjConfig *ProjectConfig, err error) {
 
 	//for local blueprint
 	prjConfig.BluePrintPath, err = filepath.Abs(fmt.Sprintf("%s/%s", prjConfig.BasePath, prjConfig.BluePrint))
-	prjConfig.Ignore = append(prjConfig.Ignore, DefaultEnvironments...)
+	prjConfig.Ignore = append(prjConfig.Ignore, DefaultIgnoredFiles...)
 
 	return
 }
@@ -145,14 +144,14 @@ func LinkBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 
 	for _, f := range folders {
 
-		if f.IsDir() && !lib.StringInSlice(f.Name(), ignoreFolders) {
+		if skip, _ := skipFile(f.Name(), ignoreFolders); !skip {
 
 			source := fmt.Sprintf("%s/%s", workingFolder, f.Name())
 			dest := fmt.Sprintf("%s/%s", destinyFolder, f.Name())
 
 			log.Printf("Linking blueprint folder %s -> %s", source, dest)
 
-			CleanStackFolder(dest)
+			CleanStackFolder(dest, ignoreFolders)
 			err = lib.LinkChild(source, dest, ignoreFolders, verbose)
 		}
 	}
@@ -160,15 +159,9 @@ func LinkBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 	return
 }
 
-func CleanStackFolder(stackFolder string) (err error) {
-	log.Println("Cleaning folder ", stackFolder)
-
-	f, err := os.Stat(stackFolder)
-	if err != nil {
-		return
-	}
-
-	if !lib.StringInSlice(f.Name(), DefaultIgnoredFiles) {
+func CleanStackFolder(stackFolder string, ignoreFolders []string) (err error) {
+	if skip, _ := skipFile(stackFolder, ignoreFolders); !skip {
+		log.Println("Cleaning folder ", stackFolder)
 		os.RemoveAll(stackFolder)
 	}
 
@@ -179,10 +172,11 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 
 	opt := cp.Options{
 		Skip: func(src string) (bool, error) {
-			f, err := os.Stat(src)
-			doCopy := f.IsDir() && !lib.StringInSlice(f.Name(), ignoreFolders)
-			log.Printf("Copping blueprint folder %s", src)
-			return !doCopy, err
+			skip, err := skipFile(src, ignoreFolders)
+			if !skip {
+				log.Printf("Copying file %s", src)
+			}
+			return skip, err
 		},
 	}
 
@@ -192,11 +186,34 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 		source := fmt.Sprintf("%s/%s", workingFolder, f.Name())
 		dest := fmt.Sprintf("%s/%s", destinyFolder, f.Name())
 
+		CleanStackFolder(dest, ignoreFolders)
 		err = cp.Copy(source, dest, opt)
 
 		if nil != err {
 			return
 		}
+	}
+
+	return
+}
+
+func skipFile(path string, ignoreFolders []string) (skip bool, err error) {
+
+	if os.IsNotExist(err) {
+		log.Printf("File %s does not exists", path)
+		err = nil
+		return
+	}
+
+	f, err := os.Stat(path)
+	if nil == err {
+		skip = lib.StringInSlice(f.Name(), ignoreFolders)
+	} else {
+		lib.StringInSlice(path, ignoreFolders)
+	}
+
+	if skip {
+		log.Printf("Skiping file %s", path)
 	}
 
 	return

@@ -19,6 +19,7 @@ func TestCreateAWSProject(t *testing.T) {
 		"v0.0.0",
 		"tf-components",
 		"v0.0.0",
+		"../../../../",
 		project.DefaultEnvironments, project.DefaultRegions)
 	if nil != err {
 		t.Error(err)

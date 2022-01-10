@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	Platform, ProjectName, Stack, Blueprint, BlueprintVersion string
-	Environments, Regions                                     []string
-	LinkInit                                                  bool
+	Platform, ProjectName, Stack, Blueprint, BlueprintVersion, LibraryRelativePath string
+	Environments, Regions                                                          []string
+	LinkInit                                                                       bool
 )
 
 func init() {
@@ -24,6 +24,7 @@ func init() {
 	newProjectCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
 	newProjectCmd.Flags().StringVarP(&Library, "library", "l", "", "Library (ex: git@github.com:spycode-io/tf-components.git")
 	newProjectCmd.Flags().StringVarP(&LibraryVersion, "version", "k", "", "Library version (or tag if it's a git repository)")
+	newProjectCmd.Flags().StringVarP(&LibraryRelativePath, "library-relative-path", "q", "", "Library version (or tag if it's a git repository)")
 	newProjectCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of environments")
 	newProjectCmd.Flags().StringSliceVarP(&Environments, "environment", "e", project.DefaultEnvironments, "Pass a list of environments")
 
@@ -57,7 +58,9 @@ var newProjectCmd = &cobra.Command{
 new: creates a new project with local reference for blueprint and components
 Ex:
 
-spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -l tf-modules-aws -r us-east-1 -e dev -e prd
+Create a local solution with all folders (project, blueprint and modules) in same folder
+
+spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -l tf-modules-aws -r us-east-1 -e dev -e prd -h ../../../../
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -72,6 +75,7 @@ spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app 
 			BlueprintVersion,
 			Library,
 			LibraryVersion,
+			LibraryRelativePath,
 			Environments,
 			Regions)
 
@@ -105,9 +109,7 @@ var cleanProjectCmd = &cobra.Command{
 	Short: "Clean a project",
 	Long:  `Use project clean to remove all bp files`,
 	Run: func(cmd *cobra.Command, args []string) {
-
-		err := project.CleanStackFolder(BasePath)
-
+		err := project.CleanStackFolder(BasePath, project.DefaultIgnoredFiles)
 		if nil != err {
 			log.Fatal(err)
 		}

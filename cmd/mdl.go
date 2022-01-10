@@ -18,7 +18,7 @@ func init() {
 
 	initCmd(includeModuleCmd)
 
-	includeModuleCmd.Flags().StringVarP(&Module, "module", "m", "", "Module (ex: aws/vpc)")
+	includeModuleCmd.Flags().StringVarP(&Module, "module", "m", "", "Module")
 	includeModuleCmd.MarkFlagRequired("module")
 
 	moduleCmd.AddCommand(includeModuleCmd)
@@ -37,7 +37,8 @@ var includeModuleCmd = &cobra.Command{
 	Long: `include: includes a new module in a blueprint region
 
 Ex: To create a vpc module called web-app-vpc
-spycli module new -m vpc -n "VPC Web App"
+
+spycli module include -n "My VPC" -m vpc
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
