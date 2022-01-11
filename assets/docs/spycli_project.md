@@ -20,7 +20,7 @@ Use project commands
 
 ### SEE ALSO
 
-* [spycli](spycli.md)	 - Spy iac CLI
+* [spycli](spycli.md)	 - spycli the killer iac project tool
 * [spycli project init](spycli_project_init.md)	 - Initialize a project
 * [spycli project new](spycli_project_new.md)	 - Create new project
 

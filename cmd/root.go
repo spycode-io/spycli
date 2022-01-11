@@ -10,8 +10,9 @@ import (
 
 var rootCmd = &cobra.Command{
 	Use:   "spycli",
-	Short: "Spy iac CLI",
+	Short: "spycli the killer iac project tool",
 	Long: `
+
    ███████╗██████╗ ██╗   ██╗ ██████╗██╗     ██╗
    ██╔════╝██╔══██╗╚██╗ ██╔╝██╔════╝██║     ██║
    ███████╗██████╔╝ ╚████╔╝ ██║     ██║     ██║
@@ -20,8 +21,8 @@ var rootCmd = &cobra.Command{
    ╚══════╝╚═╝        ╚═╝    ╚═════╝╚══════╝╚═╝												
   v0.0.0
   
-  SpyCLI is a CLI library for work with iac
-  projects, blueprints, tf-components, etc`,
+  SpyCLI is a command library tool for work with iac
+  projects, blueprints, modules, etc`,
 }
 
 var (

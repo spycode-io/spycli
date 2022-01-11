@@ -22,7 +22,7 @@ See each sub-command's help for details on how to use the generated script.
 
 ### SEE ALSO
 
-* [spycli](spycli.md)	 - Spy iac CLI
+* [spycli](spycli.md)	 - spycli the killer iac project tool
 * [spycli completion bash](spycli_completion_bash.md)	 - Generate the autocompletion script for bash
 * [spycli completion fish](spycli_completion_fish.md)	 - Generate the autocompletion script for fish
 * [spycli completion powershell](spycli_completion_powershell.md)	 - Generate the autocompletion script for powershell

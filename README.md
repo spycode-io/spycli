@@ -46,4 +46,4 @@ SpyCli helps developers to manage projects using scaffolds and automations. The 
 
 ## Commands Reference
 
-Access [SpyCli Commands Reference](assets/docs/spycli.md) for more details
+### Access [SpyCLI commands reference](assets/docs/spycli.md) for more details

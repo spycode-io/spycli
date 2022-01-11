@@ -1,8 +1,9 @@
 ## spycli
 
-Spy iac CLI
+spycli the killer iac project tool
 
 ### Synopsis
+
 
 ```
   ███████╗██████╗ ██╗   ██╗ ██████╗██╗     ██╗
@@ -10,11 +11,11 @@ Spy iac CLI
   ███████╗██████╔╝ ╚████╔╝ ██║     ██║     ██║
   ╚════██║██╔═══╝   ╚██╔╝  ██║     ██║     ██║
   ███████║██║        ██║   ╚██████╗███████╗██║
-  ╚══════╝╚═╝        ╚═╝    ╚═════╝╚══════╝╚═╝						
+  ╚══════╝╚═╝        ╚═╝    ╚═════╝╚══════╝╚═╝												
   v0.0.0
 ```
-SpyCLI is a CLI library for work with iac
-projects, blueprints, tf-components, etc
+SpyCLI is a command library tool for work with iac
+projects, blueprints, modules, etc
 
 ### Options
 
