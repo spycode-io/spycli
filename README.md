@@ -1,7 +1,6 @@
 # SPY CLI
 
-**SpyCLI** is a CLI library for work with iac
-projects that follows the **Blueprint** and **Thin Projects** with **[terragrunt](https://terragrunt.gruntwork.io/)**.
+**SpyCLI** spycli the killer iac tool for deal with projects that follows the **Blueprint** and **Thin Projects** with **[terragrunt](https://terragrunt.gruntwork.io/)**.
 
 ## Terragrunt project structure
 
