@@ -1,5 +1,9 @@
 package main
-import "fmt"
+
+import (
+	"github.com/spycode-io/spycli/cmd"
+)
+
 func main() {
-    fmt.Println("hello world")
+	cmd.Execute()
 }
