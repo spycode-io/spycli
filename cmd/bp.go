@@ -32,12 +32,12 @@ func init() {
 var blueprintCmd = &cobra.Command{
 	Use:   "blueprint",
 	Short: "Manipulate iac blueprints",
-	Long:  `Use project new`,
+	Long:  `Use blueprint new`,
 }
 
 var newBlueprintCmd = &cobra.Command{
 	Use:   "new",
-	Short: "Create new project",
+	Short: "Create new blueprint",
 	Long: `Use blueprint commands
 new: creates a new blueprint
 Ex:

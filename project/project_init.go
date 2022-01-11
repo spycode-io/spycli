@@ -1,6 +1,7 @@
 package project
 
 import (
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -34,6 +35,11 @@ func InitProject(basePath string, linkInit bool) (err error) {
 		prjConfig, err = GetProjectConfig(prj)
 		if err != nil {
 			return
+		}
+
+		isValid, err := ValidateProject(prjConfig)
+		if !isValid {
+			log.Printf("Could not initialize: %s", err.Error())
 		}
 
 		DoInit(prjConfig, linkInit)
@@ -101,6 +107,16 @@ func GetProjectConfig(filePath string) (prjConfig *ProjectConfig, err error) {
 	prjConfig.BluePrintPath, err = filepath.Abs(fmt.Sprintf("%s/%s", prjConfig.BasePath, prjConfig.BluePrint))
 	prjConfig.Ignore = append(prjConfig.Ignore, DefaultIgnoredFiles...)
 
+	return
+}
+
+func ValidateProject(prjConfig *ProjectConfig) (isValid bool, err error) {
+	isValid = lib.FileExists(prjConfig.ProjectPath) && lib.FileExists(prjConfig.BluePrintPath)
+	if isValid {
+		log.Printf("(happygarry) the %s is valid ", prjConfig.Name)
+		return
+	}
+	err = errors.New("invalid project")
 	return
 }
 
@@ -194,13 +210,12 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 
 func skipFile(path string, ignoreFolders []string) (skip bool, err error) {
 
-	if os.IsNotExist(err) {
-		log.Printf("File %s does not exists", path)
-		err = nil
+	if !lib.FileExists(path) {
+		err = errors.New("file not found")
 		return
 	}
-
 	f, err := os.Stat(path)
+
 	if nil == err {
 		skip = lib.StringInSlice(f.Name(), ignoreFolders)
 	} else {
