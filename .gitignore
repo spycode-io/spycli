@@ -7,3 +7,4 @@ terragrunt.iml
 .terragrunt-cache
 .terraform.lock.hcl
 .iac-test
+*.zip
