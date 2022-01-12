@@ -17,12 +17,10 @@ func init() {
 
 	initCmd(newBlueprintCmd)
 
-	newBlueprintCmd.Flags().StringVarP(&Blueprint, "blueprint", "b", "", "Blueprint")
-	newBlueprintCmd.Flags().StringVarP(&BlueprintVersion, "version", "v", "v0.0.0", "Blueprint version")
 	newBlueprintCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
 	newBlueprintCmd.Flags().StringSliceVarP(&Regions, "region", "r", []string{}, "Pass a list of regions")
 
-	newBlueprintCmd.MarkFlagRequired("blueprint")
+	newBlueprintCmd.MarkFlagRequired("name")
 	newBlueprintCmd.MarkFlagRequired("stack")
 
 	blueprintCmd.AddCommand(newBlueprintCmd)
@@ -38,11 +36,15 @@ var blueprintCmd = &cobra.Command{
 var newBlueprintCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create new blueprint",
-	Long: `Use blueprint commands
-new: creates a new blueprint
-Ex:
+	Long: `
 
-spycli blueprint new -n "BP AWS Nearform" -s simple-web-app -b "git@github.com:spycode-io/bp-test.git" -r us-east-1`,
+Creates a new empty blueprint
+
+Ex: To create a new blueprint called bp-aws-nearform with a empty stack called simple-web-app with a region us-east-1
+
+  spycli blueprint new -n "BP AWS Nearform" -s simple-web-app -r us-east-1
+  
+`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		base := getScaffold("templates/bp")

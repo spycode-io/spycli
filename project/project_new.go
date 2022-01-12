@@ -14,9 +14,6 @@ func NewProject(
 	stack string,
 	blueprint string,
 	blueprintVersion string,
-	library string,
-	libraryVersion string,
-	libraryRelativePath string,
 	environments []string,
 	regions []string) (project *ProjectScaffold, err error) {
 
@@ -32,12 +29,8 @@ func NewProject(
 	for _, env := range environments {
 		project.Environments = append(project.Environments,
 			model.Environment{
-				Name:                env,
-				Path:                fmt.Sprintf("%s/%s", project.ProjectPath, env),
-				Library:             library,
-				LibraryVersion:      libraryVersion,
-				BlueprintVersion:    blueprintVersion,
-				LibraryRelativePath: libraryRelativePath,
+				Name: env,
+				Path: fmt.Sprintf("%s/%s", project.ProjectPath, env),
 			},
 		)
 	}

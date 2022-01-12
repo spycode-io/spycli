@@ -13,12 +13,8 @@ locals {
   region = local.region_vars.region
 
   name = "{{.Scaffold.SlugName}}-${local.environment}"
-  module = "{{.Module}}"
-
-  library = local.env_vars.library
-  library_version = local.env_vars.library_version
-  tf_module_source = "${local.env_vars.library}//${local.module}${local.library_version}"
-
+  module_url = "{{.ModuleUrl}}"
+  
   tags = {
     Name = local.name
     Project = local.prj_slug_name

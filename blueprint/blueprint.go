@@ -11,8 +11,6 @@ import (
 
 type BlueprintScaffold struct {
 	*model.Scaffold
-	Url           string
-	Version       string
 	BluePrintPath string
 	Stack         string
 	StackPath     string
@@ -44,8 +42,6 @@ func NewBlueprint(
 
 	blueprint := &BlueprintScaffold{
 		Scaffold:      base,
-		Url:           url,
-		Version:       version,
 		BluePrintPath: fmt.Sprintf("%s/%s", base.BasePath, base.SlugName),
 		Stack:         stack,
 		StackPath:     fmt.Sprintf("%s/%s/%s", base.BasePath, base.SlugName, stack),
@@ -65,7 +61,7 @@ func NewBlueprint(
 
 func (b *BlueprintScaffold) InitBlueprint() (err error) {
 
-	log.Printf("Initializing blueprint %s %s", b.Url, b.Version)
+	log.Printf("Initializing a new blueprint %s", b.SlugName)
 
 	//Create base folder if necessary
 	_, err = os.Stat(b.BluePrintPath)

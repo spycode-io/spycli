@@ -10,8 +10,17 @@ import (
 func TestNewModule(t *testing.T) {
 
 	base := model.NewScaffold("My VPC", ".iac-test", "templates/mdl")
+	_, err := module.NewModule(base, "tf-modules/vpc", false)
 
-	_, err := module.NewModule(base, "vpc")
+	if nil != err {
+		t.Error(err)
+	}
+}
+
+func TestNewLocalModule(t *testing.T) {
+
+	base := model.NewScaffold("My VPC Local", ".iac-test", "templates/mdl")
+	_, err := module.NewModule(base, "tf-modules/vpc", false)
 
 	if nil != err {
 		t.Error(err)

@@ -92,9 +92,6 @@ func NewProjectStructure(t *testing.T) (*project.ProjectScaffold, error) {
 		"web-stack",
 		".iac-test/bp-test",
 		"v0.0.0",
-		"../../../../tf-aws-modules",
-		"",
-		"",
 		project.DefaultEnvironments, project.DefaultRegions)
 }
 
@@ -138,5 +135,5 @@ func CreateModule(baseFolder string, name string, moduleName string) (*module.Mo
 		baseFolder,
 		"templates/mdl")
 
-	return module.NewModule(scaffold, moduleName)
+	return module.NewModule(scaffold, moduleName, "", false)
 }

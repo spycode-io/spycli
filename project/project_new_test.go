@@ -17,9 +17,6 @@ func TestCreateAWSProject(t *testing.T) {
 		"my-stack",
 		"my-blueprint",
 		"v0.0.0",
-		"tf-components",
-		"v0.0.0",
-		"../../../../",
 		project.DefaultEnvironments, project.DefaultRegions)
 	if nil != err {
 		t.Error(err)

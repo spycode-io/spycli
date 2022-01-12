@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	Platform, ProjectName, Stack, Blueprint, BlueprintVersion, LibraryRelativePath string
-	Environments, Regions                                                          []string
-	LinkInit                                                                       bool
+	Platform, ProjectName, Stack, Blueprint, BlueprintVersion string
+	Environments, Regions                                     []string
+	LinkInit                                                  bool
 )
 
 func init() {
@@ -22,9 +22,6 @@ func init() {
 	newProjectCmd.Flags().StringVarP(&Blueprint, "blueprint", "b", "", "Blueprint")
 	newProjectCmd.Flags().StringVarP(&BlueprintVersion, "blueprint-version", "v", "", "Blueprint version")
 	newProjectCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
-	newProjectCmd.Flags().StringVarP(&Library, "library", "l", "", "Library (ex: git@github.com:spycode-io/tf-components.git")
-	newProjectCmd.Flags().StringVarP(&LibraryVersion, "version", "k", "", "Library version (or tag if it's a git repository)")
-	newProjectCmd.Flags().StringVarP(&LibraryRelativePath, "library-relative-path", "q", "", "Library version (or tag if it's a git repository)")
 	newProjectCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of environments")
 	newProjectCmd.Flags().StringSliceVarP(&Environments, "environment", "e", project.DefaultEnvironments, "Pass a list of environments")
 
@@ -32,7 +29,7 @@ func init() {
 	newBlueprintCmd.MarkFlagRequired("blueprint")
 
 	initProjectCmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
-	initProjectCmd.PersistentFlags().BoolVarP(&LinkInit, "link", "l", false, "Base directory where the files will be writen")
+	initProjectCmd.PersistentFlags().BoolVarP(&LinkInit, "link", "l", false, "Link files locally instead of copy. This option is the best when editing blueprint files")
 	initProjectCmd.MarkFlagRequired("directory")
 
 	cleanProjectCmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
@@ -55,12 +52,13 @@ var newProjectCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create new project",
 	Long: `Use project new
+
 new: creates a new project with local reference for blueprint and components
 Ex:
 
 Create a local solution with all folders (project, blueprint and modules) in same folder
 
-spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -l tf-modules-aws -r us-east-1 -e dev -e prd -q "../../../../"
+spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -r us-east-1 -e dev -e prd
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
@@ -73,9 +71,6 @@ spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app 
 			Stack,
 			Blueprint,
 			BlueprintVersion,
-			Library,
-			LibraryVersion,
-			LibraryRelativePath,
 			Environments,
 			Regions)
 
