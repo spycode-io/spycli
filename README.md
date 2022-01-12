@@ -2,8 +2,9 @@
 
 **SpyCLI** spycli the killer iac tool for deal with projects that follows the **Blueprint** and **Thin Projects** with **[terragrunt](https://terragrunt.gruntwork.io/)**.
 
- **Blueprint**: Is a reausable set of components distributed in specific or in any regions
- **Thin Project**: Is a iac project that have **environments**, **configuration** and references to a **Blueprint**
+ - **Blueprint**: Is a reausable set of components distributed in specific or in any regions
+ 
+ - **Thin Project**: Is a iac project that have **environments**, **configuration** and references to a **Blueprint**
 
 ## Terragrunt project structure
 
