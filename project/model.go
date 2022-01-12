@@ -7,14 +7,16 @@ import (
 
 type ProjectScaffold struct {
 	model.Scaffold
-	Platform         string
-	PlatformPath     string
-	ProjectPath      string
-	Stack            string
-	Blueprint        string
-	BlueprintVersion string
-	Environments     []model.Environment
-	Regions          []model.Region
+	Platform       string
+	PlatformPath   string
+	ProjectPath    string
+	Stack          string
+	Blueprint      string
+	Environments   []model.Environment
+	Regions        []model.Region
+	UseRemoteState bool
+	RemoteBucket   string
+	RemoteRegion   string
 }
 
 type ProjectConfig struct {

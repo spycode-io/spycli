@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -49,12 +48,12 @@ or you can include a local module from a library in same path of the project:
 	Run: func(cmd *cobra.Command, args []string) {
 
 		base := getScaffold("templates/mdl")
-		mdl, err := module.NewModule(base, ModuleUrl, LocalLibrary)
+		_, err := module.NewModule(base, ModuleUrl, LocalLibrary)
 
 		if nil != err {
 			log.Fatal(err)
 		}
 
-		log.Println(fmt.Printf("%+v\n", mdl))
+		log.Println("Module created successfully!")
 	},
 }

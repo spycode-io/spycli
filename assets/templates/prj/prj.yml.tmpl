@@ -2,5 +2,7 @@ name: {{.Name}}
 slugName: {{.SlugName}}
 blueprint: {{.Blueprint}}
 stack: {{.Stack}}
+{{if .UseRemoteState}}remoteBucket: {{.RemoteBucket}}
+remoteRegion: {{.RemoteRegion}}{{end}}
 ignore: []
 

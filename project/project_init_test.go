@@ -90,8 +90,10 @@ func NewProjectStructure(t *testing.T) (*project.ProjectScaffold, error) {
 		model.NewScaffold("My Project", ".iac-test", "templates/prj"),
 		"aws",
 		"web-stack",
-		".iac-test/bp-test",
-		"v0.0.0",
+		"my-blueprint",
+		false,
+		"",
+		"",
 		project.DefaultEnvironments, project.DefaultRegions)
 }
 
@@ -105,8 +107,6 @@ func NewBlueprint(t *testing.T) (bp *blueprint.BlueprintScaffold, err error) {
 	bp, err = blueprint.NewBlueprint(
 		bpScaffold,
 		"git@github.com:spycode-io/bp-test.git",
-		"v0.0.0",
-		"web-stack",
 		[]string{})
 
 	if nil != err {
@@ -135,5 +135,5 @@ func CreateModule(baseFolder string, name string, moduleName string) (*module.Mo
 		baseFolder,
 		"templates/mdl")
 
-	return module.NewModule(scaffold, moduleName, "", false)
+	return module.NewModule(scaffold, "my-module", true)
 }

@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -49,10 +48,8 @@ Ex: To create a new blueprint called bp-aws-nearform with a empty stack called s
 
 		base := getScaffold("templates/bp")
 
-		bp, err := blueprint.NewBlueprint(
+		_, err := blueprint.NewBlueprint(
 			base,
-			Blueprint,
-			BlueprintVersion,
 			Stack,
 			Regions,
 		)
@@ -61,6 +58,6 @@ Ex: To create a new blueprint called bp-aws-nearform with a empty stack called s
 			log.Fatal(err)
 		}
 
-		log.Println(fmt.Printf("%+v\n", bp))
+		log.Println("Blueprint created successfully!")
 	},
 }

@@ -10,6 +10,11 @@ locals {
   name          = local.prj_vars.name
   environment   = local.env_vars.environment
   region        = local.region_vars.region  
+{{if .UseRemoteState}}
+  state_bucket = local.prj_vars.stateBucket  
+  state_region = local.prj_vars.stateRegion
+  state_key = "${local.slug_name}/${local.environment}/${local.region}.tfstate"
+{{end}}
 }
 
 # Generate an azure provider block
@@ -21,6 +26,16 @@ generate "provider" {
 provider "aws" {
   region  = "${local.region}"
 }
+
+{{if .UseRemoteState}}
+terraform {
+  backend "s3" {
+    bucket = "${local.state_bucket}"
+    key    = "${local.state_key}"
+    region = "${local.state_region}"
+  }
+}
+{{end}}
 EOF
 }
 

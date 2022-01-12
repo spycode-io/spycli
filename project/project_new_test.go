@@ -16,7 +16,7 @@ func TestCreateAWSProject(t *testing.T) {
 		"aws",
 		"my-stack",
 		"my-blueprint",
-		"v0.0.0",
+		false, "", "",
 		project.DefaultEnvironments, project.DefaultRegions)
 	if nil != err {
 		t.Error(err)

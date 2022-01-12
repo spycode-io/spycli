@@ -35,8 +35,6 @@ var (
 
 func NewBlueprint(
 	base *model.Scaffold,
-	url string,
-	version string,
 	stack string,
 	regions []string) (*BlueprintScaffold, error) {
 
@@ -91,45 +89,5 @@ func (b *BlueprintScaffold) InitBlueprint() (err error) {
 		}
 	}
 
-	//Create base folder if necessary
-	// _, err = os.Stat(b.StackPath)
-	// if os.IsNotExist(err) {
-	// 	os.MkdirAll(b.StackPath, os.ModePerm)
-	// 	err = nil
-	// }
-
-	// //Create blueprint files from template
-	// for _, pf := range BpFileSet.Set["default"]["blueprint"] {
-	// 	bpFile := fmt.Sprintf("%s/%s", b.BluePrintPath, pf.File)
-	// 	err = b.WriteFile(pf.TmplFile, bpFile)
-	// 	if nil != err {
-	// 		return
-	// 	}
-	// }
-
-	// //Create stack files from template
-	// for _, pf := range BpFileSet.Set["default"]["stack"] {
-	// 	bpFile := fmt.Sprintf("%s/%s", b.StackPath, pf.File)
-	// 	err = b.WriteFile(pf.TmplFile, bpFile)
-	// 	if nil != err {
-	// 		return
-	// 	}
-	// }
-
-	// //Create region files from template
-	// for _, r := range b.Regions {
-	// 	for _, f := range BpFileSet.Set["default"]["region"] {
-	// 		bpFile := fmt.Sprintf("%s/%s/%s", b.StackPath, r.Region, f.File)
-	// 		err = BpFileSet.WriteObjToFile(f.TmplFile, bpFile, r)
-	// 		if nil != err {
-	// 			return
-	// 		}
-	// 	}
-	// }
-
 	return
 }
-
-// func (p *BlueprintScaffold) WriteFile(tmplFile string, file string) (err error) {
-// 	return BpFileSet.WriteObjToFile(tmplFile, file, p)
-// }

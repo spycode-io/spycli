@@ -20,15 +20,14 @@ locals {
     Project = local.prj_slug_name
     Environment = local.environment
     Region = local.region
-    Module = local.module
-    Source = local.tf_module_source
+    Module = local.module_url
   }
 }
 
 terraform {
-  source = local.tf_module_source
+  source = local.module_url
 }
 
 inputs = {
-  tags = local.tags
+  tags = local.tags 
 }

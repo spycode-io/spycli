@@ -113,10 +113,9 @@ func GetProjectConfig(filePath string) (prjConfig *ProjectConfig, err error) {
 func ValidateProject(prjConfig *ProjectConfig) (isValid bool, err error) {
 	isValid = lib.FileExists(prjConfig.ProjectPath) && lib.FileExists(prjConfig.BluePrintPath)
 	if isValid {
-		log.Printf("(happygarry) the %s is valid ", prjConfig.Name)
 		return
 	}
-	err = errors.New("invalid project")
+	err = fmt.Errorf("(happygarry) the %s is valid ", prjConfig.Name)
 	return
 }
 

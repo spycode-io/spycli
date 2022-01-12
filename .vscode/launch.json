@@ -13,12 +13,36 @@
             "args": [
                 "project", 
                 "new",
+                "-d", "${workspaceFolder}/.iac-test",
                 "-n", "My Project",
-                "-d", ".iac-test",
+                "-b", "bp-aws-nearform",
+                "-e", "develop",
+                "-e", "production",                
+                "-r", "us-east-1",
+                "-r", "us-west-1",
+                "-s", "my-stack"
+            ]
+        },
+        {
+            "name": "New Project - Remote State",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "project", 
+                "new",
+                "-d", "${workspaceFolder}/.iac-test",
+                "-n", "My Project",
+                "-b", "bp-aws-nearform",
+                "-e", "develop",
+                "-e", "production",                
+                "-r", "us-east-1",
+                "-r", "us-west-1",
                 "-s", "my-stack",
-                "-b", "git@github.com:spycode-io/sample-bp.git",
-                "-v", "v0.0.0",
-                "-k", "v0.0.1"
+                "-t", 
+                "-u", "my-bucket",
+                "-v", "us-east-1"
             ]
         },
         {
@@ -30,23 +54,25 @@
             "args": [
                 "blueprint",
                 "new",
-                "-b", "git@github.com:spycode-io/my-business-bp.git",
-                "-n", "my-business-bp",
-                "-s", "my-stack"
+                "-d", "${workspaceFolder}/.iac-test",
+                "-n", "BP AWS Nearform",
+                "-s", "my-stack",
+                "-r", "us-east-1",
+                "-r", "us-west-1",
             ]
         },
         {
-            "name": "New Module",
+            "name": "Include Module",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/main.go",
             "args": [
                 "module", 
-                "new",
-                "-d", ".iac-test",
-                "-n", "My VPC",
-                "-m", "vpc"
+                "include",
+                "-d", "${workspaceFolder}/.iac-test/bp-aws-nearform/my-stack/_any",
+                "-n", "my-vpc",
+                "-u", "git@github.com:terraform-aws-modules/terraform-aws-vpc.git"
             ]
         },
         {
@@ -66,7 +92,7 @@
             "args": [
                 "project", 
                 "init",
-                "-d", "/home/g/Projects/spycode/demo/prj-demo"
+                "-d", "${workspaceFolder}/.iac-test/my-project"
             ]
         },
         {
@@ -78,8 +104,8 @@
             "args": [
                 "project", 
                 "init",
-                "-d", "/home/g/Projects/spycode/demo/prj-demo",
-                "-l", "true"
+                "-d", "${workspaceFolder}/.iac-test/my-project",
+                "-l"
             ]
         },
     ]
