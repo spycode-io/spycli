@@ -1,7 +1,6 @@
 package project
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -209,10 +208,12 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 
 func skipFile(path string, ignoreFolders []string) (skip bool, err error) {
 
-	if !lib.FileExists(path) {
-		err = errors.New("file not found")
-		return
-	}
+	// if !lib.FileExists(path) {
+	// 	skip = true
+	// 	err = errors.New("file not found")
+	// 	return
+	// }
+
 	f, err := os.Stat(path)
 
 	if nil == err {

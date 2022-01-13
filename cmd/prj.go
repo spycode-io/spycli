@@ -34,7 +34,7 @@ func init() {
 	newProjectCmd.MarkFlagRequired("stack")
 
 	initProjectCmd.Flags().BoolVarP(&LinkInit, "link", "l", false, "Link files locally instead of copy. This option is the best when editing blueprint files")
-	initProjectCmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", "", "Base directory where the files will be writen")
+	initProjectCmd.Flags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
 
 	projectCmd.AddCommand(newProjectCmd)
 	projectCmd.AddCommand(initProjectCmd)
