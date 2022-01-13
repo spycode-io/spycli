@@ -31,7 +31,7 @@ var (
 )
 
 func init() {
-	rootCmd.PersistentFlags().BoolVarP(&Verbose, "verbose", "V", false, "verbose output")
+	rootCmd.Flags().BoolVarP(&Verbose, "verbose", "V", false, "verbose output")
 	log.SetOutput(os.Stdout)
 }
 
@@ -41,8 +41,8 @@ func Execute() error {
 }
 
 func initCmd(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVarP(&Name, "name", "n", "", "Element name (ex: my-project or my-blueprint)")
-	cmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", "", "Base directory where the files will be writen")
+	cmd.Flags().StringVarP(&Name, "name", "n", "", "Element name (ex: my-project or my-blueprint)")
+	cmd.Flags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
 }
 
 func getScaffold(assetsPath string) *model.Scaffold {

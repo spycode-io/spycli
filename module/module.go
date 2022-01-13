@@ -11,10 +11,9 @@ import (
 
 type Module struct {
 	Scaffold   *model.Scaffold
-	Module     string
+	ModuleUrl  string
 	ModulePath string
-	Lib        string
-	LibVersion string
+	IsLocal    bool
 }
 
 type ModuleInterface interface {
@@ -34,13 +33,21 @@ var InstallFileSet map[string][]assets.FileTmpl = map[string][]assets.FileTmpl{
 	},
 }
 
+const LibraryLocalRelativePath = "../../../.."
+
 func NewModule(
 	base *model.Scaffold,
-	moduleName string) (*Module, error) {
+	moduleUrl string,
+	isLocal bool) (*Module, error) {
+
+	if isLocal {
+		moduleUrl = fmt.Sprintf("%s/%s", LibraryLocalRelativePath, slug.Make(base.Name))
+	}
 
 	module := &Module{
 		Scaffold:   base,
-		Module:     moduleName,
+		IsLocal:    isLocal,
+		ModuleUrl:  moduleUrl,
 		ModulePath: fmt.Sprintf("%s/%s", base.BasePath, slug.Make(base.Name)),
 	}
 
@@ -51,7 +58,7 @@ func NewModule(
 
 func (m *Module) InitModule() (err error) {
 
-	log.Printf("Initializing module %s [%s/%s]", m.Scaffold.Name, m.Lib, m.Module)
+	log.Printf("Initializing module %s [%s]", m.Scaffold.Name, m.ModuleUrl)
 
 	//Write module files
 	err = m.Scaffold.FileSet.WriteObjToPath("new", "module", m.ModulePath, m)

@@ -8,8 +8,14 @@ locals {
   region_vars = yamldecode(file(find_in_parent_folders("region.yml")))
 
   name          = local.prj_vars.name
+  slug_name     = local.prj_vars.slugName
   environment   = local.env_vars.environment
   region        = local.region_vars.region  
+{{if .UseRemoteState}}
+  remote_bucket = local.prj_vars.remoteBucket  
+  remote_region = local.prj_vars.remoteRegion
+  remote_key = "${local.slug_name}/${local.environment}/${local.region}.tfstate"
+{{end}}
 }
 
 # Generate an azure provider block
@@ -21,6 +27,16 @@ generate "provider" {
 provider "aws" {
   region  = "${local.region}"
 }
+
+{{if .UseRemoteState}}
+terraform {
+  backend "s3" {
+    bucket = "${local.remote_bucket}"
+    key    = "${local.remote_key}"
+    region = "${local.remote_region}"
+  }
+}
+{{end}}
 EOF
 }
 

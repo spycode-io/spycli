@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -9,9 +8,9 @@ import (
 )
 
 var (
-	Platform, ProjectName, Stack, Blueprint, BlueprintVersion, LibraryRelativePath string
-	Environments, Regions                                                          []string
-	LinkInit                                                                       bool
+	Platform, ProjectName, Stack, Blueprint, RemoteStateBucket, RemoteStateRegion string
+	Environments, Regions                                                         []string
+	LinkInit, LocalBlueprint, UseRemoteState                                      bool
 )
 
 func init() {
@@ -20,27 +19,25 @@ func init() {
 
 	newProjectCmd.Flags().StringVarP(&Platform, "platform", "p", "aws", "Plataform or service (aws|azure)")
 	newProjectCmd.Flags().StringVarP(&Blueprint, "blueprint", "b", "", "Blueprint")
-	newProjectCmd.Flags().StringVarP(&BlueprintVersion, "blueprint-version", "v", "", "Blueprint version")
 	newProjectCmd.Flags().StringVarP(&Stack, "stack", "s", "", "Stack name")
-	newProjectCmd.Flags().StringVarP(&Library, "library", "l", "", "Library (ex: git@github.com:spycode-io/tf-components.git")
-	newProjectCmd.Flags().StringVarP(&LibraryVersion, "version", "k", "", "Library version (or tag if it's a git repository)")
-	newProjectCmd.Flags().StringVarP(&LibraryRelativePath, "library-relative-path", "q", "", "Library version (or tag if it's a git repository)")
+
 	newProjectCmd.Flags().StringSliceVarP(&Regions, "region", "r", project.DefaultRegions, "Pass a list of environments")
 	newProjectCmd.Flags().StringSliceVarP(&Environments, "environment", "e", project.DefaultEnvironments, "Pass a list of environments")
+	newProjectCmd.Flags().BoolVarP(&LocalBlueprint, "local", "l", false, "Local blueprint")
+
+	newProjectCmd.Flags().BoolVarP(&UseRemoteState, "remote-state", "t", false, "Use remote state")
+	newProjectCmd.Flags().StringVarP(&RemoteStateBucket, "remote-bucket", "u", "", "Stack name")
+	newProjectCmd.Flags().StringVarP(&RemoteStateRegion, "remote-bucket-region", "v", "", "Stack name")
 
 	newProjectCmd.MarkFlagRequired("name")
-	newBlueprintCmd.MarkFlagRequired("blueprint")
+	newProjectCmd.MarkFlagRequired("blueprint")
+	newProjectCmd.MarkFlagRequired("stack")
 
-	initProjectCmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
-	initProjectCmd.PersistentFlags().BoolVarP(&LinkInit, "link", "l", false, "Base directory where the files will be writen")
-	initProjectCmd.MarkFlagRequired("directory")
-
-	cleanProjectCmd.PersistentFlags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
-	cleanProjectCmd.MarkFlagRequired("directory")
+	initProjectCmd.Flags().BoolVarP(&LinkInit, "link", "l", false, "Link files locally instead of copy. This option is the best when editing blueprint files")
+	initProjectCmd.Flags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
 
 	projectCmd.AddCommand(newProjectCmd)
 	projectCmd.AddCommand(initProjectCmd)
-	//projectCmd.AddCommand(cleanProjectCmd)
 
 	rootCmd.AddCommand(projectCmd)
 }
@@ -54,28 +51,40 @@ var projectCmd = &cobra.Command{
 var newProjectCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create new project",
-	Long: `Use project new
-new: creates a new project with local reference for blueprint and components
-Ex:
+	Long: `Creates a new project with local or remote reference for blueprint and components
 
-Create a local solution with all folders (project, blueprint and modules) in same folder
+Examples:
 
-spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app -l tf-modules-aws -r us-east-1 -e dev -e prd -q "../../../../"
+Create a project that:
+
+- Is called "My Project"
+- Uses blueprint bp-aws-nearform and stack simple-web-app locally
+- Have two environments: develop and production
+- Have two regions: us-east-1 and us-west-1
+
+spycli project new -n "My Project" -b bp-aws-nearform -l -s simple-web-app -r us-east-1 -e develop -e production
+
+The same project but using remove blueprint:
+
+spycli project new -n "My Project" -b git@github.com:nearform/bp-aws-nearform.git -s simple-web-app -r us-east-1 -e develop -e production
+
+The same project but using remote blueprint and remote state in terraform:
+
+spycli project new -n "My Project" -b git@github.com:nearform/bp-aws-nearform.git -s simple-web-app -r us-east-1 -e develop -e production -t -u my-bucket -v us-east-1
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		base := getScaffold("templates/prj")
 
-		prj, err := project.NewProject(
+		_, err := project.NewProject(
 			base,
 			Platform,
 			Stack,
 			Blueprint,
-			BlueprintVersion,
-			Library,
-			LibraryVersion,
-			LibraryRelativePath,
+			UseRemoteState,
+			RemoteStateBucket,
+			RemoteStateRegion,
 			Environments,
 			Regions)
 
@@ -83,7 +92,7 @@ spycli project new -n "Prj Simple Web App" -b bp-aws-nearform -s simple-web-app 
 			log.Fatal(err)
 		}
 
-		log.Println(fmt.Printf("%+v\n", prj))
+		log.Println("Project created successfully!")
 	},
 }
 
@@ -101,17 +110,19 @@ spycli project init`,
 		if nil != err {
 			log.Fatal(err)
 		}
+
+		log.Println("Project initialized successfully!")
 	},
 }
 
-var cleanProjectCmd = &cobra.Command{
-	Use:   "clean",
-	Short: "Clean a project",
-	Long:  `Use project clean to remove all bp files`,
-	Run: func(cmd *cobra.Command, args []string) {
-		err := project.CleanStackFolder(BasePath, project.DefaultIgnoredFiles)
-		if nil != err {
-			log.Fatal(err)
-		}
-	},
-}
+// var cleanProjectCmd = &cobra.Command{
+// 	Use:   "clean",
+// 	Short: "Clean a project",
+// 	Long:  `Use project clean to remove all bp files`,
+// 	Run: func(cmd *cobra.Command, args []string) {
+// 		err := project.CleanStackFolder(BasePath, project.DefaultIgnoredFiles)
+// 		if nil != err {
+// 			log.Fatal(err)
+// 		}
+// 	},
+// }

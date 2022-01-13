@@ -15,8 +15,6 @@ func TestNewBlueprint(t *testing.T) {
 	_, err := blueprint.NewBlueprint(
 		baseScaffold,
 		"git@github.com:spycode-io/tf-modules.git",
-		"v0.0.1",
-		"my-stack",
 		project.DefaultRegions)
 
 	if nil != err {

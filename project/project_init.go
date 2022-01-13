@@ -1,7 +1,6 @@
 package project
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -113,10 +112,9 @@ func GetProjectConfig(filePath string) (prjConfig *ProjectConfig, err error) {
 func ValidateProject(prjConfig *ProjectConfig) (isValid bool, err error) {
 	isValid = lib.FileExists(prjConfig.ProjectPath) && lib.FileExists(prjConfig.BluePrintPath)
 	if isValid {
-		log.Printf("(happygarry) the %s is valid ", prjConfig.Name)
 		return
 	}
-	err = errors.New("invalid project")
+	err = fmt.Errorf("(happygarry) the %s is valid ", prjConfig.Name)
 	return
 }
 
@@ -210,10 +208,12 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 
 func skipFile(path string, ignoreFolders []string) (skip bool, err error) {
 
-	if !lib.FileExists(path) {
-		err = errors.New("file not found")
-		return
-	}
+	// if !lib.FileExists(path) {
+	// 	skip = true
+	// 	err = errors.New("file not found")
+	// 	return
+	// }
+
 	f, err := os.Stat(path)
 
 	if nil == err {

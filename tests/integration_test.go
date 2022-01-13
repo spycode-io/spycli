@@ -25,8 +25,6 @@ func TestIntegrationLocalFlow(t *testing.T) {
 	bp, err := blueprint.NewBlueprint(
 		bpScaffold,
 		"bp-test",
-		"v0.0.0",
-		"web-stack",
 		[]string{})
 
 	if nil != err || nil == bp {
@@ -41,10 +39,9 @@ func TestIntegrationLocalFlow(t *testing.T) {
 		"aws",
 		"web-stack",
 		"bp-test",
-		"v0.0.0",
-		"tf-aws-modules",
+		false,
 		"",
-		"../../../../",
+		"",
 		project.DefaultEnvironments, project.DefaultRegions)
 
 	if nil != err || nil == prj {
@@ -88,8 +85,6 @@ func TestRemoteFlow(t *testing.T) {
 	bp, err := blueprint.NewBlueprint(
 		bpScaffold,
 		"bp-test",
-		"v0.0.0",
-		"web-stack",
 		[]string{})
 
 	if nil != err || nil == bp {
@@ -102,10 +97,7 @@ func TestRemoteFlow(t *testing.T) {
 		"aws",
 		"web-stack",
 		"bp-test",
-		"v0.0.0",
-		"tf-aws-modules",
-		"",
-		"../../../../",
+		false, "", "",
 		project.DefaultEnvironments, project.DefaultRegions)
 
 	if nil != err || nil == prj {
@@ -125,22 +117,17 @@ func TestRemoteFlow(t *testing.T) {
 		t.Error(err)
 	}
 
-	project.InitProject(prj.ProjectPath, false)
-
-	if _, err := os.Stat(fmt.Sprintf("%s/dev/us-east-1/my-vpc", prj.ProjectPath)); errors.Is(err, os.ErrNotExist) {
-		t.FailNow()
-	}
-
-	if _, err := os.Stat(fmt.Sprintf("%s/dev/us-east-1/my-vms", prj.ProjectPath)); errors.Is(err, os.ErrNotExist) {
-		t.FailNow()
+	err = project.InitProject(prj.ProjectPath, false)
+	if nil != err {
+		t.Error(err)
 	}
 }
 
-func createModule(baseFolder string, name string, moduleName string) (*module.Module, error) {
+func createModule(baseFolder string, name string, moduleUrl string) (*module.Module, error) {
 	scaffold := model.NewScaffold(
 		name,
 		baseFolder,
 		"templates/mdl")
 
-	return module.NewModule(scaffold, moduleName)
+	return module.NewModule(scaffold, moduleUrl, true)
 }

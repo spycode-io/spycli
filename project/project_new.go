@@ -13,31 +13,28 @@ func NewProject(
 	plaform string,
 	stack string,
 	blueprint string,
-	blueprintVersion string,
-	library string,
-	libraryVersion string,
-	libraryRelativePath string,
+	useRemoteState bool,
+	remoteStateBucket string,
+	remoteStateRegion string,
 	environments []string,
 	regions []string) (project *ProjectScaffold, err error) {
 
 	project = &ProjectScaffold{
-		Scaffold:         *base,
-		Platform:         plaform,
-		Stack:            stack,
-		Blueprint:        blueprint,
-		BlueprintVersion: blueprintVersion,
-		ProjectPath:      fmt.Sprintf("%s/%s", base.BasePath, base.SlugName),
+		Scaffold:       *base,
+		Platform:       plaform,
+		Stack:          stack,
+		Blueprint:      blueprint,
+		ProjectPath:    fmt.Sprintf("%s/%s", base.BasePath, base.SlugName),
+		UseRemoteState: useRemoteState,
+		RemoteBucket:   remoteStateBucket,
+		RemoteRegion:   remoteStateRegion,
 	}
 
 	for _, env := range environments {
 		project.Environments = append(project.Environments,
 			model.Environment{
-				Name:                env,
-				Path:                fmt.Sprintf("%s/%s", project.ProjectPath, env),
-				Library:             library,
-				LibraryVersion:      libraryVersion,
-				BlueprintVersion:    blueprintVersion,
-				LibraryRelativePath: libraryRelativePath,
+				Name: env,
+				Path: fmt.Sprintf("%s/%s", project.ProjectPath, env),
 			},
 		)
 	}
