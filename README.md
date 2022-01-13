@@ -2,6 +2,11 @@
 
 **SpyCLI** spycli the killer iac tool for deal with projects that follows the **Blueprint** and **Thin Projects** with **[terragrunt](https://terragrunt.gruntwork.io/)**.
 
+
+## Demonstration
+
+[![Watch the demo](assets/img/cover.png)](https://youtu.be/nBTP2VugADo)
+
 ## Terragrunt project structure
 
 Lets consider the following scenario:
