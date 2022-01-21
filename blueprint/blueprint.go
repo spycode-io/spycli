@@ -64,7 +64,7 @@ func (b *BlueprintScaffold) InitBlueprint() (err error) {
 	//Create base folder if necessary
 	_, err = os.Stat(b.BluePrintPath)
 	if os.IsNotExist(err) {
-		os.MkdirAll(b.BluePrintPath, os.ModePerm)
+		os.MkdirAll(b.BluePrintPath, 0755)
 		err = nil
 	}
 

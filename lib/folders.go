@@ -2,36 +2,11 @@ package lib
 
 import (
 	"fmt"
-	"io"
 	"io/fs"
 	"log"
 	"os"
 	"path/filepath"
 )
-
-func CopyFile(source string, dest string) (err error) {
-	sourcefile, err := os.Open(source)
-	if err != nil {
-		return
-	}
-
-	defer sourcefile.Close()
-
-	destfile, err := os.Create(dest)
-	if err != nil {
-		return
-	}
-
-	defer destfile.Close()
-	_, err = io.Copy(destfile, sourcefile)
-	if err == nil {
-		sourceinfo, err := os.Stat(source)
-		if err != nil {
-			_ = os.Chmod(dest, sourceinfo.Mode())
-		}
-	}
-	return
-}
 
 func CopyDir(source string, dest string, ignoreFolders []string, verbose bool) (err error) {
 

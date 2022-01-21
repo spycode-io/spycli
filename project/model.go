@@ -30,6 +30,10 @@ type ProjectConfig struct {
 	Ignore        []string `yaml:"ignore"`
 }
 
+type EnvConfig struct {
+	Environment string `yaml:"environment"`
+}
+
 type RegionConfig struct {
 	Region   string `yaml:"region"`
 	BasePath string `yaml:"basePath"`

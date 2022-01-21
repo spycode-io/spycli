@@ -108,5 +108,20 @@
                 "-l"
             ]
         },
+        {
+            "name": "Clone Environment",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "project", 
+                "clone",
+                "env",
+                "-d", "${workspaceFolder}/.iac-test/my-project",
+                "-n", "pr-1",
+                "-f", "develop",
+            ]
+        }
     ]
 }
