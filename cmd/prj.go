@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	Platform, ProjectName, Stack, Blueprint, RemoteStateBucket, RemoteStateRegion string
-	Environments, Regions                                                         []string
-	LinkInit, LocalBlueprint, UseRemoteState                                      bool
+	Platform, ProjectName, Stack, Blueprint, RemoteStateBucket, RemoteStateRegion, FromEnvironment string
+	Environments, Regions                                                                          []string
+	LinkInit, LocalBlueprint, UseRemoteState                                                       bool
 )
 
 func init() {
@@ -36,8 +36,16 @@ func init() {
 	initProjectCmd.Flags().BoolVarP(&LinkInit, "link", "l", false, "Link files locally instead of copy. This option is the best when editing blueprint files")
 	initProjectCmd.Flags().StringVarP(&BasePath, "directory", "d", ".", "Base directory where the files will be writen")
 
+	initCmd(cloneEnvProjectCmd)
+	cloneEnvProjectCmd.Flags().StringVarP(&FromEnvironment, "from", "f", "", "Environment origin of copy")
+	cloneEnvProjectCmd.MarkFlagRequired("from")
+	cloneEnvProjectCmd.MarkFlagRequired("name")
+
 	projectCmd.AddCommand(newProjectCmd)
 	projectCmd.AddCommand(initProjectCmd)
+	projectCmd.AddCommand(cloneProjectCmd)
+
+	cloneProjectCmd.AddCommand(cloneEnvProjectCmd)
 
 	rootCmd.AddCommand(projectCmd)
 }
@@ -74,9 +82,7 @@ spycli project new -n "My Project" -b git@github.com:nearform/bp-aws-nearform.gi
 
 `,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		base := getScaffold("templates/prj")
-
 		_, err := project.NewProject(
 			base,
 			Platform,
@@ -87,11 +93,10 @@ spycli project new -n "My Project" -b git@github.com:nearform/bp-aws-nearform.gi
 			RemoteStateRegion,
 			Environments,
 			Regions)
-
 		if nil != err {
 			log.Fatal(err)
+			return
 		}
-
 		log.Println("Project created successfully!")
 	},
 }
@@ -104,14 +109,37 @@ var initProjectCmd = &cobra.Command{
 Ex:
 spycli project init`,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		err := project.InitProject(BasePath, LinkInit)
-
 		if nil != err {
 			log.Fatal(err)
+			return
 		}
-
 		log.Println("Project initialized successfully!")
+	},
+}
+
+var cloneProjectCmd = &cobra.Command{
+	Use:   "clone",
+	Short: "Clone elements of a project",
+	Long: `Use project clone on a project folder
+Ex:
+spycli project clone`,
+}
+
+var cloneEnvProjectCmd = &cobra.Command{
+	Use:   "env",
+	Short: "Clone a environment",
+	Long: `Clones a entire environment
+
+Ex:
+spycli project clone env --from develop --to pr-env`,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := project.CloneEnv(BasePath, Name, FromEnvironment)
+		if nil != err {
+			log.Fatal(err)
+			return
+		}
+		log.Println("Environment cloned successfully!")
 	},
 }
 
