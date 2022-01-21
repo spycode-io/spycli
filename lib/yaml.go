@@ -3,6 +3,7 @@ package lib
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"go.uber.org/config"
 	"gopkg.in/yaml.v2"
@@ -21,7 +22,7 @@ func MergeYaml(src string, dst string) (err error) {
 	}
 
 	var dstYml *config.YAML
-	if dstYml, err = config.NewYAML(config.Source(dstFile), config.Source(srcFile)); err != nil {
+	if dstYml, err = config.NewYAML(config.Source(srcFile), config.Source(dstFile)); err != nil {
 		return
 	}
 
@@ -39,6 +40,10 @@ func MergeYaml(src string, dst string) (err error) {
 }
 
 func WriteToYaml(path string, obj interface{}) (err error) {
+
+	if err = os.MkdirAll(filepath.Dir(path), os.ModeSticky|os.ModePerm); err != nil {
+		return
+	}
 
 	var data []byte
 	if data, err = yaml.Marshal(&obj); nil != err {

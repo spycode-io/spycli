@@ -122,6 +122,21 @@
                 "-n", "pr-1",
                 "-f", "develop",
             ]
+        },
+        {
+            "name": "Clone Environment Techbase",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/main.go",
+            "args": [
+                "project", 
+                "clone",
+                "env",
+                "-d", "/home/g/projects/nearform/techbase/infra/iac-techbase-hasura",
+                "-n", "pr-1",
+                "-f", "staging",
+            ]
         }
     ]
 }
