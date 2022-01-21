@@ -3,22 +3,19 @@ package project
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
-	"os"
 	"path/filepath"
 	"strings"
 
 	"github.com/gosimple/slug"
 	"github.com/spycode-io/spycli/lib"
-	yaml "gopkg.in/yaml.v2"
 )
 
-func CloneEnv(basePath string, name string, from string) (err error) {
+func CloneEnv(basePath string, name string, src string) (err error) {
 
 	fullBasePath, err := filepath.Abs(basePath)
 	name = slug.Make(name)
-	from = slug.Make(from)
+	src = slug.Make(src)
 
 	if err != nil {
 		return
@@ -45,60 +42,39 @@ func CloneEnv(basePath string, name string, from string) (err error) {
 			log.Printf("Could not initialize: %s", err.Error())
 		}
 
-		fromPath := fmt.Sprintf("%s/%s", prjConfig.ProjectPath, from)
-		if !lib.FileExists(fromPath) {
-			err = errors.New("from environment not exists in project")
+		srcPath := fmt.Sprintf("%s/%s", prjConfig.ProjectPath, src)
+		if !lib.FileExists(srcPath) {
+			err = errors.New("source environment not exists in project")
 			return
 		}
 
+		//Create base file
 		toPath := fmt.Sprintf("%s/%s", prjConfig.ProjectPath, name)
-		os.MkdirAll(toPath, 0755)
-
-		//copy env config file
-		fromEnvFile := fmt.Sprintf("%s/env.yml", fromPath)
 		toEnvFile := fmt.Sprintf("%s/env.yml", toPath)
 
-		err = lib.CopyFile(fromEnvFile, toEnvFile)
-		if err != nil {
+		envConfig := &EnvConfig{Environment: name}
+		if err = lib.WriteToYaml(toEnvFile, envConfig); nil != err {
 			return
 		}
 
-		var envConfig *EnvConfig
-		envConfig, err = GetEnvConfig(toEnvFile)
-		if err != nil {
-			return
-		}
-
-		envConfig.Environment = name
-		var data []byte
-		data, err = yaml.Marshal(envConfig)
-
-		if err != nil {
-			return
-		}
-
-		err = ioutil.WriteFile(toEnvFile, data, 0666)
-		if err != nil {
-			return
-		}
+		//Merge base file and source file
+		srcEnvFile := fmt.Sprintf("%s/env.yml", srcPath)
+		lib.MergeYaml(srcEnvFile, toEnvFile)
 
 		var files []string
-		files, err = filepath.Glob(fmt.Sprintf("%s/*/region.yml", fromPath))
+		files, err = filepath.Glob(fmt.Sprintf("%s/*/region.yml", srcPath))
 		if err != nil {
 			return
 		}
 
 		for _, f := range files {
-			toRegionFile := strings.Replace(f, from, name, 1)
+			toRegionFile := strings.Replace(f, src, name, 1)
 			log.Printf("copying %s to %s", f, toRegionFile)
 			err = lib.CopyFile(f, toRegionFile)
 			if err != nil {
 				return
 			}
 		}
-
-		//lib.CopyDir(fromPath, toPath, []string{".git", ".terragrunt-cache", ".terraform.lock.hcl"}, true)
-
 	}
 	return
 }
