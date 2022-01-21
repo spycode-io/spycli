@@ -1,133 +1,121 @@
 package tests_test
 
-import (
-	"errors"
-	"fmt"
-	"os"
-	"testing"
+// func TestIntegrationLocalFlow(t *testing.T) {
 
-	"github.com/spycode-io/spycli/blueprint"
-	"github.com/spycode-io/spycli/model"
-	"github.com/spycode-io/spycli/module"
-	"github.com/spycode-io/spycli/project"
-)
+// 	//Cleam test folder
+// 	os.RemoveAll(".iac-test")
 
-func TestIntegrationLocalFlow(t *testing.T) {
+// 	//Create a new blueprint
+// 	bpScaffold := model.NewScaffold(
+// 		"Bp Test",
+// 		".iac-test", "templates/bp")
 
-	//Cleam test folder
-	os.RemoveAll(".iac-test")
+// 	bp, err := blueprint.NewBlueprint(
+// 		bpScaffold,
+// 		"bp-test",
+// 		[]string{})
 
-	//Create a new blueprint
-	bpScaffold := model.NewScaffold(
-		"Bp Test",
-		".iac-test", "templates/bp")
+// 	if nil != err || nil == bp {
+// 		t.Error(err)
+// 	}
 
-	bp, err := blueprint.NewBlueprint(
-		bpScaffold,
-		"bp-test",
-		[]string{})
+// 	//Create a new project
+// 	prj, err := project.NewProject(
+// 		model.NewScaffold(
+// 			"My Project",
+// 			".iac-test", "templates/prj"),
+// 		"aws",
+// 		"web-stack",
+// 		"bp-test",
+// 		false,
+// 		"",
+// 		"",
+// 		project.DefaultEnvironments, project.DefaultRegions)
 
-	if nil != err || nil == bp {
-		t.Error(err)
-	}
+// 	if nil != err || nil == prj {
+// 		t.Error(err)
+// 	}
 
-	//Create a new project
-	prj, err := project.NewProject(
-		model.NewScaffold(
-			"My Project",
-			".iac-test", "templates/prj"),
-		"aws",
-		"web-stack",
-		"bp-test",
-		false,
-		"",
-		"",
-		project.DefaultEnvironments, project.DefaultRegions)
+// 	//Create new modules
+// 	anyRegionBasePath := fmt.Sprintf(".iac-test/%s/%s/_any", bp.SlugName, bp.Stack)
 
-	if nil != err || nil == prj {
-		t.Error(err)
-	}
+// 	vpc, err := createModule(anyRegionBasePath, "My VPC", "vpc")
+// 	if nil != err || nil == vpc {
+// 		t.Error(err)
+// 	}
 
-	//Create new modules
-	anyRegionBasePath := fmt.Sprintf(".iac-test/%s/%s/_any", bp.SlugName, bp.Stack)
+// 	vms, err := createModule(anyRegionBasePath, "My VMS", "vm")
+// 	if nil != err || nil == vms {
+// 		t.Error(err)
+// 	}
 
-	vpc, err := createModule(anyRegionBasePath, "My VPC", "vpc")
-	if nil != err || nil == vpc {
-		t.Error(err)
-	}
+// 	project.InitProject(prj.ProjectPath, true)
 
-	vms, err := createModule(anyRegionBasePath, "My VMS", "vm")
-	if nil != err || nil == vms {
-		t.Error(err)
-	}
+// 	if _, err := os.Stat(fmt.Sprintf("%s/dev/us-east-1/my-vpc", prj.ProjectPath)); errors.Is(err, os.ErrNotExist) {
+// 		t.FailNow()
+// 	}
 
-	project.InitProject(prj.ProjectPath, true)
+// 	if _, err := os.Stat(fmt.Sprintf("%s/dev/us-east-1/my-vms", prj.ProjectPath)); errors.Is(err, os.ErrNotExist) {
+// 		t.FailNow()
+// 	}
+// }
 
-	if _, err := os.Stat(fmt.Sprintf("%s/dev/us-east-1/my-vpc", prj.ProjectPath)); errors.Is(err, os.ErrNotExist) {
-		t.FailNow()
-	}
+// func TestRemoteFlow(t *testing.T) {
 
-	if _, err := os.Stat(fmt.Sprintf("%s/dev/us-east-1/my-vms", prj.ProjectPath)); errors.Is(err, os.ErrNotExist) {
-		t.FailNow()
-	}
-}
+// 	//Cleam test folder
+// 	os.RemoveAll(".iac-test")
 
-func TestRemoteFlow(t *testing.T) {
+// 	//Create a new blueprint
+// 	bpScaffold := model.NewScaffold(
+// 		"Bp Test",
+// 		".iac-test", "templates/bp")
 
-	//Cleam test folder
-	os.RemoveAll(".iac-test")
+// 	bp, err := blueprint.NewBlueprint(
+// 		bpScaffold,
+// 		"bp-test",
+// 		[]string{})
 
-	//Create a new blueprint
-	bpScaffold := model.NewScaffold(
-		"Bp Test",
-		".iac-test", "templates/bp")
+// 	if nil != err || nil == bp {
+// 		t.Error(err)
+// 	}
 
-	bp, err := blueprint.NewBlueprint(
-		bpScaffold,
-		"bp-test",
-		[]string{})
+// 	//Create a new project
+// 	prj, err := project.NewProject(
+// 		model.NewScaffold("My Project", ".iac-test", "templates/prj"),
+// 		"aws",
+// 		"web-stack",
+// 		"bp-test",
+// 		false, "", "",
+// 		project.DefaultEnvironments, project.DefaultRegions)
 
-	if nil != err || nil == bp {
-		t.Error(err)
-	}
+// 	if nil != err || nil == prj {
+// 		t.Error(err)
+// 	}
 
-	//Create a new project
-	prj, err := project.NewProject(
-		model.NewScaffold("My Project", ".iac-test", "templates/prj"),
-		"aws",
-		"web-stack",
-		"bp-test",
-		false, "", "",
-		project.DefaultEnvironments, project.DefaultRegions)
+// 	//Create new modules
+// 	anyRegionBasePath := fmt.Sprintf(".iac-test/%s/%s/_any", bp.SlugName, bp.Stack)
 
-	if nil != err || nil == prj {
-		t.Error(err)
-	}
+// 	vpc, err := createModule(anyRegionBasePath, "My VPC", "vpc")
+// 	if nil != err || nil == vpc {
+// 		t.Error(err)
+// 	}
 
-	//Create new modules
-	anyRegionBasePath := fmt.Sprintf(".iac-test/%s/%s/_any", bp.SlugName, bp.Stack)
+// 	vms, err := createModule(anyRegionBasePath, "My VMS", "vm")
+// 	if nil != err || nil == vms {
+// 		t.Error(err)
+// 	}
 
-	vpc, err := createModule(anyRegionBasePath, "My VPC", "vpc")
-	if nil != err || nil == vpc {
-		t.Error(err)
-	}
+// 	err = project.InitProject(prj.ProjectPath, false)
+// 	if nil != err {
+// 		t.Error(err)
+// 	}
+// }
 
-	vms, err := createModule(anyRegionBasePath, "My VMS", "vm")
-	if nil != err || nil == vms {
-		t.Error(err)
-	}
+// func createModule(baseFolder string, name string, moduleUrl string) (*module.Module, error) {
+// 	scaffold := model.NewScaffold(
+// 		name,
+// 		baseFolder,
+// 		"templates/mdl")
 
-	err = project.InitProject(prj.ProjectPath, false)
-	if nil != err {
-		t.Error(err)
-	}
-}
-
-func createModule(baseFolder string, name string, moduleUrl string) (*module.Module, error) {
-	scaffold := model.NewScaffold(
-		name,
-		baseFolder,
-		"templates/mdl")
-
-	return module.NewModule(scaffold, moduleUrl, true)
-}
+// 	return module.NewModule(scaffold, moduleUrl, true)
+// }
