@@ -59,7 +59,7 @@ func (p *ProjectScaffold) Init() (err error) {
 	//Create base folder if necessary
 	_, err = os.Stat(p.ProjectPath)
 	if os.IsNotExist(err) {
-		os.MkdirAll(p.ProjectPath, os.ModePerm)
+		os.MkdirAll(p.ProjectPath, 0755)
 		err = nil
 	}
 

@@ -16,8 +16,8 @@ func TestLinkingFiles(t *testing.T) {
 	os.RemoveAll(".iac-test/source")
 	os.RemoveAll(".iac/destiny")
 
-	os.MkdirAll(".iac-test/source/m1", os.ModePerm)
-	os.MkdirAll(".iac-test/source/m2", os.ModePerm)
+	os.MkdirAll(".iac-test/source/m1", 0755)
+	os.MkdirAll(".iac-test/source/m2", 0755)
 
 	f1 := []byte("f1")
 	os.WriteFile(".iac-test/source/m1/f1", f1, 0644)
@@ -25,7 +25,7 @@ func TestLinkingFiles(t *testing.T) {
 	f2 := []byte("f2")
 	os.WriteFile(".iac-test/source/m2/f2", f2, 0644)
 
-	os.MkdirAll(".iac-test/destiny", os.ModePerm)
+	os.MkdirAll(".iac-test/destiny", 0755)
 
 	project.LinkBlueprintFolders(".iac-test/source", ".iac-test/destiny", []string{}, true)
 
@@ -42,8 +42,8 @@ func TestCopyingFiles(t *testing.T) {
 	os.RemoveAll(".iac-test/source")
 	os.RemoveAll(".iac/destiny")
 
-	os.MkdirAll(".iac-test/source/m1", os.ModePerm)
-	os.MkdirAll(".iac-test/source/m2", os.ModePerm)
+	os.MkdirAll(".iac-test/source/m1", 0755)
+	os.MkdirAll(".iac-test/source/m2", 0755)
 
 	f1 := []byte("f1")
 	os.WriteFile(".iac-test/source/m1/f1", f1, 0644)
@@ -51,7 +51,7 @@ func TestCopyingFiles(t *testing.T) {
 	f2 := []byte("f2")
 	os.WriteFile(".iac-test/source/m2/f2", f2, 0644)
 
-	os.MkdirAll(".iac-test/destiny", os.ModePerm)
+	os.MkdirAll(".iac-test/destiny", 0755)
 
 	project.CopyBlueprintFolders(".iac-test/source", ".iac-test/destiny", []string{}, true)
 

@@ -109,12 +109,27 @@ func GetProjectConfig(filePath string) (prjConfig *ProjectConfig, err error) {
 	return
 }
 
+func GetEnvConfig(filePath string) (envConfig *EnvConfig, err error) {
+	var data []byte
+
+	data, err = os.ReadFile(filePath)
+	if err != nil {
+		return
+	}
+	err = yaml.Unmarshal([]byte(data), &envConfig)
+	if err != nil {
+		return
+	}
+
+	return
+}
+
 func ValidateProject(prjConfig *ProjectConfig) (isValid bool, err error) {
 	isValid = lib.FileExists(prjConfig.ProjectPath) && lib.FileExists(prjConfig.BluePrintPath)
 	if isValid {
 		return
 	}
-	err = fmt.Errorf("(happygarry) the %s is valid ", prjConfig.Name)
+	err = fmt.Errorf("the %s is valid ", prjConfig.Name)
 	return
 }
 
@@ -189,13 +204,12 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 	for _, f := range folders {
 
 		if skip, _ := skipFile(f.Name(), ignoreFolders); !skip {
-
 			source := fmt.Sprintf("%s/%s", workingFolder, f.Name())
 			dest := fmt.Sprintf("%s/%s", destinyFolder, f.Name())
 
 			log.Printf("Copying blueprint folder %s -> %s", source, dest)
-
 			CleanStackFolder(dest, ignoreFolders)
+
 			err = cp.Copy(source, dest)
 			if nil != err {
 				return

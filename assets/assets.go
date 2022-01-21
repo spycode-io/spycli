@@ -74,7 +74,7 @@ func (f *FileSet) WriteObjToFile(tmplFile string, file string, obj interface{}) 
 	dir := filepath.Dir(file)
 	_, err = os.Stat(dir)
 	if os.IsNotExist(err) {
-		os.MkdirAll(dir, os.ModePerm)
+		os.MkdirAll(dir, os.ModeSticky|os.ModePerm)
 		err = nil
 	}
 

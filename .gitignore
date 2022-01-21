@@ -8,3 +8,4 @@ terragrunt.iml
 .terraform.lock.hcl
 .iac-test
 *.zip
+.history
