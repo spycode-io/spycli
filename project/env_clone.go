@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -71,12 +72,18 @@ func CloneEnv(basePath string, name string, src string) (err error) {
 		lib.WriteToYaml(toEnvFile, dstYaml)
 
 		var files []string
-		files, err = filepath.Glob(fmt.Sprintf("%s/*/region.yml", srcPath))
+		files, err = filepath.Glob(fmt.Sprintf("%s/*/*", srcPath))
+
 		if err != nil {
 			return
 		}
 
 		for _, f := range files {
+			var info os.FileInfo
+			if info, err = os.Stat(f); err != nil || info.IsDir() {
+				continue
+			}
+
 			toRegionFile := strings.Replace(f, src, name, 1)
 			log.Printf("copying %s to %s", f, toRegionFile)
 			err = lib.CopyFile(f, toRegionFile)

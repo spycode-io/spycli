@@ -134,8 +134,8 @@
                 "clone",
                 "env",
                 "-d", "/home/g/projects/nearform/techbase/infra/iac-techbase-hasura",
-                "-n", "pr000",
-                "-f", "_pr",
+                "-n", "pr00",
+                "-f", "staging",
             ]
         }
     ]
