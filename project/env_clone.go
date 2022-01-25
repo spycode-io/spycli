@@ -59,7 +59,16 @@ func CloneEnv(basePath string, name string, src string) (err error) {
 
 		//Merge base file and source file
 		srcEnvFile := fmt.Sprintf("%s/env.yml", srcPath)
-		lib.MergeYaml(srcEnvFile, toEnvFile)
+
+		var dstYaml, srcYaml map[string]interface{}
+		srcYaml, dstYaml, err = lib.MergeYaml(srcEnvFile, toEnvFile)
+
+		if err != nil {
+			return
+		}
+
+		dstYaml["ignore"] = srcYaml["ignore"]
+		lib.WriteToYaml(toEnvFile, dstYaml)
 
 		var files []string
 		files, err = filepath.Glob(fmt.Sprintf("%s/*/region.yml", srcPath))
