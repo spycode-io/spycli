@@ -13,7 +13,20 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-var DefaultIgnoredFiles []string = []string{"prj.yml", "env.yml", "region.yml", ".git"}
+var (
+	DefaultIgnoredFiles []string = []string{
+		"prj.yml",
+		"env.yml",
+		"region.yml",
+		".git",
+	}
+
+	DefaultIgnoredFolders []string = []string{
+		".terraform.lock.hcl",
+		".terragrunt-cache",
+		".history",
+	}
+)
 
 func InitProject(basePath string, linkInit bool) (err error) {
 
@@ -23,7 +36,7 @@ func InitProject(basePath string, linkInit bool) (err error) {
 	}
 
 	log.Printf("Initializing project on %s", fullBasePath)
-	prjConfigFiles, err := GetConfigFiles(fullBasePath, "prj.yml")
+	prjConfigFiles, err := GetConfigFiles(fullBasePath, "prj.yml", DefaultIgnoredFolders)
 
 	if err != nil {
 		return
@@ -48,25 +61,48 @@ func InitProject(basePath string, linkInit bool) (err error) {
 
 func DoInit(prjConfig *ProjectConfig, linkInit bool) (err error) {
 
-	regionConfigFiles, err := GetConfigFiles(prjConfig.ProjectPath, "region.yml")
+	envConfigFiles, err := GetConfigFiles(prjConfig.ProjectPath, "env.yml", DefaultIgnoredFolders)
 
 	if err != nil {
 		return
 	}
 
-	for _, reg := range regionConfigFiles {
-		var regConfig *RegionConfig
-		regConfig, err = GetRegionConfig(reg)
+	for _, env := range envConfigFiles {
+
+		var envConfig *EnvConfig
+		envConfig, err = GetEnvConfig(env)
 		if err != nil {
 			return
 		}
 
-		regFolder := filepath.Base(regConfig.BasePath)
-		source := fmt.Sprintf("%s/%s/%s", prjConfig.BluePrintPath, prjConfig.Stack, "_any")
-		SyncBlueprintFolders(source, regConfig.BasePath, prjConfig.Ignore, linkInit)
+		log.Printf("Working on Env: %s [%s]", envConfig.Environment, envConfig.BasePath)
 
-		source = fmt.Sprintf("%s/%s/%s", prjConfig.BluePrintPath, prjConfig.Stack, regFolder)
-		SyncBlueprintFolders(source, regConfig.BasePath, prjConfig.Ignore, linkInit)
+		var regionConfigFiles []string
+		regionConfigFiles, err = GetConfigFiles(envConfig.BasePath, "region.yml", DefaultIgnoredFolders)
+
+		if err != nil {
+			return
+		}
+
+		for _, reg := range regionConfigFiles {
+			var regConfig *RegionConfig
+			regConfig, err = GetRegionConfig(reg)
+			if err != nil {
+				return
+			}
+
+			ignoredFolders := append(prjConfig.Ignore, DefaultIgnoredFolders...)
+			ignoredFolders = append(ignoredFolders, envConfig.Ignore...)
+			ignoredFolders = append(ignoredFolders, regConfig.Ignore...)
+
+			regFolder := filepath.Base(regConfig.BasePath)
+
+			source := fmt.Sprintf("%s/%s/%s", prjConfig.BluePrintPath, prjConfig.Stack, "_any")
+			SyncBlueprintFolders(source, regConfig.BasePath, ignoredFolders, linkInit)
+
+			source = fmt.Sprintf("%s/%s/%s", prjConfig.BluePrintPath, prjConfig.Stack, regFolder)
+			SyncBlueprintFolders(source, regConfig.BasePath, ignoredFolders, linkInit)
+		}
 	}
 
 	return
@@ -121,6 +157,8 @@ func GetEnvConfig(filePath string) (envConfig *EnvConfig, err error) {
 		return
 	}
 
+	envConfig.BasePath = filepath.Dir(filePath)
+
 	return
 }
 
@@ -149,19 +187,25 @@ func GetRegionConfig(filePath string) (regConfig *RegionConfig, err error) {
 	return
 }
 
-func GetConfigFiles(location string, fileName string) (configFiles []string, err error) {
+func GetConfigFiles(location string, fileName string, ignoreFolders []string) (configFiles []string, err error) {
 
 	configFiles = make([]string, 0)
 
 	err = filepath.Walk(location,
 		func(path string, info os.FileInfo, err error) error {
+
 			if err != nil {
 				return err
+			}
+
+			if skip, _ := skipFile(path, ignoreFolders); info.IsDir() && skip {
+				return filepath.SkipDir
 			}
 
 			if !info.IsDir() && info.Name() == fileName {
 				configFiles = append(configFiles, path)
 			}
+
 			return nil
 		})
 	return
@@ -221,12 +265,6 @@ func CopyBlueprintFolders(workingFolder string, destinyFolder string, ignoreFold
 }
 
 func skipFile(path string, ignoreFolders []string) (skip bool, err error) {
-
-	// if !lib.FileExists(path) {
-	// 	skip = true
-	// 	err = errors.New("file not found")
-	// 	return
-	// }
 
 	f, err := os.Stat(path)
 

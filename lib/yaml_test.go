@@ -42,7 +42,7 @@ func TestMergeYml(t *testing.T) {
 	}
 	dstFile.Close()
 
-	err = lib.MergeYml(".iac-test/yaml-test/src.yml", ".iac-test/yaml-test/dst.yml")
+	err = lib.MergeYaml(".iac-test/yaml-test/src.yml", ".iac-test/yaml-test/dst.yml")
 	if nil != err {
 		t.Error(err)
 	}

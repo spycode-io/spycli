@@ -31,12 +31,15 @@ type ProjectConfig struct {
 }
 
 type EnvConfig struct {
-	Environment string `yaml:"environment"`
+	Environment string   `yaml:"environment"`
+	BasePath    string   `yaml:"basePath"`
+	Ignore      []string `yaml:"ignore"`
 }
 
 type RegionConfig struct {
-	Region   string `yaml:"region"`
-	BasePath string `yaml:"basePath"`
+	Region   string   `yaml:"region"`
+	BasePath string   `yaml:"basePath"`
+	Ignore   []string `yaml:"ignore"`
 }
 
 var (
