@@ -44,6 +44,7 @@ func init() {
 	projectCmd.AddCommand(newProjectCmd)
 	projectCmd.AddCommand(initProjectCmd)
 	projectCmd.AddCommand(cloneProjectCmd)
+	projectCmd.AddCommand(cleanProjectCmd)
 
 	cloneProjectCmd.AddCommand(cloneEnvProjectCmd)
 
@@ -143,14 +144,14 @@ spycli project clone env --from develop --to pr-env`,
 	},
 }
 
-// var cleanProjectCmd = &cobra.Command{
-// 	Use:   "clean",
-// 	Short: "Clean a project",
-// 	Long:  `Use project clean to remove all bp files`,
-// 	Run: func(cmd *cobra.Command, args []string) {
-// 		err := project.CleanStackFolder(BasePath, project.DefaultIgnoredFiles)
-// 		if nil != err {
-// 			log.Fatal(err)
-// 		}
-// 	},
-// }
+var cleanProjectCmd = &cobra.Command{
+	Use:   "clean",
+	Short: "Clean a project",
+	Long:  `Use project clean to remove all bp files`,
+	Run: func(cmd *cobra.Command, args []string) {
+		err := project.CleanStackFolder(BasePath, project.DefaultIgnoredFiles)
+		if nil != err {
+			log.Fatal(err)
+		}
+	},
+}

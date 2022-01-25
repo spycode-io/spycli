@@ -15,14 +15,14 @@ func CloneEnv(basePath string, name string, src string) (err error) {
 
 	fullBasePath, err := filepath.Abs(basePath)
 	name = slug.Make(name)
-	src = slug.Make(src)
 
 	if err != nil {
 		return
 	}
 
-	log.Printf("Initializing project on %s", fullBasePath)
-	prjConfigFiles, err := GetConfigFiles(fullBasePath, "prj.yml")
+	log.Printf("Cloning environment from %s to %s", src, name)
+
+	prjConfigFiles, err := GetConfigFiles(fullBasePath, "prj.yml", DefaultIgnoredFolders)
 
 	if err != nil {
 		return

@@ -129,6 +129,11 @@ func NewBlueprint(t *testing.T) (bp *blueprint.BlueprintScaffold, err error) {
 	return
 }
 
+func TestCleandFolder(t *testing.T) {
+	os.RemoveAll(".iac-test/clean")
+	os.MkdirAll(".iac-test/clean", 0755)
+}
+
 func CreateModule(baseFolder string, name string, moduleName string) (*module.Module, error) {
 	scaffold := model.NewScaffold(
 		name,
